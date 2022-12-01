@@ -267,7 +267,7 @@ export const asyncRouterMap = [
   { path: '*', redirect: '/404', hidden: true }
 ]
 
-const router = createRouter()
+//const router = createRouter().addRoutes(asyncRouterMap)
 
 // Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
 export function resetRouter() {
