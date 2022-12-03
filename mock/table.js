@@ -1,13 +1,14 @@
 const Mock = require('mockjs')
 
 const data = Mock.mock({
-  'items|30': [{
+  'items|10': [{
     id: '@id',
-    title: '@sentence(10, 20)',
-    'status|1': ['published', 'draft', 'deleted'],
-    author: 'name',
-    display_time: '@datetime',
-    pageviews: '@integer(300, 5000)'
+    username: '@sentence(1)',
+    'role|1': ['user', 'staff'],
+    password: '@sentence(1)',
+    createTime: '@datetime'
+
+    // pageviews: '@integer(300, 5000)'
   }]
 })
 
