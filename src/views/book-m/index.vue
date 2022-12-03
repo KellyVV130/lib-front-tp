@@ -1,14 +1,26 @@
 <template>
   <div class="dashboard-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.book_name" placeholder="书名" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.author" placeholder="作者" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
-        搜索
-      </el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
-        新建
-      </el-button>
+          <el-input
+            v-model="listQuery.book_name"
+            placeholder="书名"
+            style="width: 200px;"
+            class="filter-item"
+            @keyup.enter.native="handleFilter"
+          />
+          <el-input
+            v-model="listQuery.author"
+            placeholder="作者"
+            style="width: 200px; margin-left: 20px;"
+            class="filter-item"
+            @keyup.enter.native="handleFilter"
+          />
+          <el-button v-waves class="filter-item" style=" margin-left: 20px;" type="primary" icon="el-icon-search" @click="handleFilter">
+            搜索
+          </el-button>
+          <el-button class="filter-item" style="margin-right: 20px;" type="primary" icon="el-icon-edit" @click="handleCreate">
+            新建
+          </el-button>
     </div>
 
     <el-table
@@ -18,7 +30,7 @@
       border
       fit
       highlight-current-row
-      style="width: 100%;"
+      style="width: 100%; margin-top: 20px;"
       @sort-change="sortChange"
     >
       <el-table-column label="编号" prop="id" sortable="custom" align="center" width="80" :class-name="getSortClass('id')">
@@ -37,12 +49,12 @@
           <span>{{ row.author }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="馆藏数目" prop="storage_all" sortable="custom" width="90px" align="center">
+      <el-table-column label="馆藏数目" prop="storage_all" sortable="custom" align="center">
         <template slot-scope="{row}">
           <span>{{ row.storage_all }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="可借数目" prop="storage_avail" sortable="custom" width="90px" align="center">
+      <el-table-column label="可借数目" prop="storage_avail" sortable="custom" align="center">
         <template slot-scope="{row}">
           <span>{{ row.storage_avail }}</span>
         </template>
@@ -62,14 +74,14 @@
           <span>{{ row.ISBN }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="150" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
             编辑
           </el-button>
           <el-button size="mini" type="danger" @click="handleDelete(row,$index)">
             删除
-          </el-button> <!-- TODO confirm框-->
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -77,7 +89,7 @@
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="80%">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="90px">
+      <el-form ref="dataForm" :rules="rules" :model="temp" label-width="90px">
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="图书全称" prop="name">
@@ -86,11 +98,21 @@
             <el-form-item label="作者名" prop="author">
               <el-input v-model="temp.author" placeholder="Please input" />
             </el-form-item>
-            <el-form-item label="作者国籍" prop="country"><!-- TODO 选择国家-->
-              <el-input v-model="temp.country" placeholder="Please input" />
+            <el-form-item label="作者国籍" prop="country">
+              <el-select v-model="temp.country" filterable class="filter-item" placeholder="Please select">
+                <el-option-group v-for="group in countryOptions":key="group.label" :label="group.label">
+                   <el-option v-for="item in group.options" :key="item.label" :label="item.label" :value="item.label">
+                     <span style="float: left">{{ item.label }}</span>
+<!--                     <span style="float: right; color: #8492a6; font-size: 13px">{{ item.value }}</span>-->
+                   </el-option>
+                </el-option-group>
+              </el-select>
             </el-form-item>
-            <el-form-item label="图书语言" prop="language"><!-- TODO 选择语言-->
-              <el-input v-model="temp.language" placeholder="Please input" />
+            <el-form-item label="图书语言" prop="language">
+              <el-select v-model="temp.language" placeholder="Please input" class="filter-item">
+                <el-option label="中文" value="中文" />
+                <el-option label="外语" value="外语" />
+              </el-select>
             </el-form-item>
             <el-form-item label="馆藏数目" prop="storage_all">
               <el-input v-model="temp.storage_all" placeholder="Please input" />
@@ -103,14 +125,22 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="出版日期" prop="publish_date">
-              <el-date-picker v-model="temp.publish_date" type="datetime" placeholder="Please pick a date" />
+            <el-form-item label="出版年份" prop="publish_date">
+              <el-date-picker
+                v-model="temp.publish_date"
+                type="year"
+                placeholder="选择年">
+              </el-date-picker>
             </el-form-item>
             <el-form-item label="出版社" prop="publisher">
               <el-input v-model="temp.publisher" placeholder="Please input" />
             </el-form-item>
             <el-form-item label="所属类别" prop="category">
-              <el-input v-model="temp.category" placeholder="Please input" />
+               <el-cascader
+                  v-model="temp.category"
+                  :options="categoryOptions"
+                  @change="handleChange">
+               </el-cascader>
             </el-form-item>
             <el-form-item label="中图分类号" prop="zhongtu">
               <el-input v-model="temp.zhongtu" placeholder="Please input" />
@@ -118,14 +148,16 @@
             <el-form-item label="可图分类号" prop="ketu">
               <el-input v-model="temp.ketu" placeholder="Please input" />
             </el-form-item>
-            <el-form-item label="译者" prop="translator">
+            <el-form-item label="译者" prop="translator" v-if="temp.language==='中文' && temp.country!=='中国'">
               <el-input v-model="temp.translator" placeholder="Please input" />
             </el-form-item>
             <el-form-item label="封面" prop="image">
               <el-input v-model="temp.image" placeholder="Please input" /><!--TODO 图片上传-->
             </el-form-item>
             <el-form-item label="权限等级" prop="access">
-              <el-input v-model="temp.access" placeholder="Please input" />
+              <el-select v-model="temp.access" class="filter-item" placeholder="Please select">
+                <el-option v-for="item in accessOptions" :key="item.value" :label="item.label" :value="item.value" />
+              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
@@ -157,7 +189,9 @@
 import { fetchList, fetchPv, createArticle, updateArticle } from '@/api/book-m'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
-import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+import {country} from '@/utils/country'
+import Pagination from '@/components/Pagination'
+import {category} from "@/utils/category"; // secondary package based on el-pagination
 
 const calendarTypeOptions = [
   { key: 'CN', display_name: 'China' },
@@ -185,11 +219,11 @@ const fakeData = [
     translator: '郑须弥',
     publisher: '人民文学出版社',
     publish_date: '2000',
-    category: '儿童文学-长篇小说-英国-现代',
+    category: ['儿童文学', '长篇小说', '英国', '现代'],
     zhongtu: 'I561.84',
     ketu: '47.1152',
     image: '',
-    access: 'IMPORTANT',
+    access: 'IMPORTANT'
   },
   {
     id: 2,
@@ -203,12 +237,12 @@ const fakeData = [
     translator: '郑须弥',
     publisher: '人民文学出版社',
     publish_date: '2001',
-    category: '儿童文学-长篇小说-英国-现代',
+    category: ['儿童文学', '长篇小说', '英国', '现代'],
     zhongtu: 'I561.84',
     ketu: '47.1152',
     image: '',
-    access: 'IMPORTANT',
-  },
+    access: 'IMPORTANT'
+  }
 ]
 
 export default {
@@ -217,6 +251,7 @@ export default {
   directives: { waves },
   data() {
     return {
+      countryOptions: country,
       tableKey: 0,
       list: null,
       total: 0,
@@ -241,18 +276,19 @@ export default {
         translator: '',
         publisher: '',
         publish_date: '',
-        category: '',
+        category: [],
         zhongtu: '',
         ketu: '',
         image: '',
-        access: '' // TODO select,
+        access: ''
       },
       dialogFormVisible: false,
       dialogStatus: '',
       textMap: {
         update: '编辑',
         create: '新建'
-      },
+      }, // TODO 权限的修改
+      accessOptions: [{ value: 'ALL', label: '所有人可借' }, { value: 'NONE', label: '不可借'}],
       dialogPvVisible: false,
       pvData: [],
       rules: {
@@ -261,7 +297,8 @@ export default {
         storage_all: [{ required: true, message: 'title is required', trigger: 'blur' }],
         storage_avail: [{ required: true, message: 'title is required', trigger: 'blur' }]
       },
-      downloadLoading: false
+      downloadLoading: false,
+      categoryOptions: category
     }
   },
   created() {
@@ -283,6 +320,13 @@ export default {
       //   }, 1.5 * 1000)
       // })
     },
+    handleChange(value){
+      console.log(value)
+      // this.temp.category = []
+      // value.forEach(item => {
+      //   this.temp.category = this.temp.category + item
+      // })
+    },
     handleFilter() {
       this.listQuery.page = 1
       this.getList()
@@ -300,9 +344,9 @@ export default {
     },
     sortNumber(field, order) {
       if (order === 'ascending') {
-        this.listQuery.sort = '+'+field
+        this.listQuery.sort = '+' + field
       } else {
-        this.listQuery.sort = '-'+field
+        this.listQuery.sort = '-' + field
       }
       this.getList() // TODO handleFilter()
     },
@@ -328,10 +372,8 @@ export default {
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
-          this.temp.author = 'vue-element-admin'
           createArticle(this.temp).then(() => {
-            this.list.unshift(this.temp)
+            this.list.unshift(this.temp) // TODO 获取数据而不是临时添加
             this.dialogFormVisible = false
             this.$notify({
               title: 'Success',
@@ -345,7 +387,6 @@ export default {
     },
     handleUpdate(row) {
       this.temp = Object.assign({}, row) // copy obj
-      this.temp.timestamp = new Date(this.temp.timestamp)
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {
@@ -372,14 +413,29 @@ export default {
       })
     },
     handleDelete(row, index) {
-      this.$notify({
-        title: 'Success',
-        message: 'Delete Successfully',
-        type: 'success',
-        duration: 2000
-      })
-      this.list.splice(index, 1)
-      // TODO real delete api
+      // this.$notify({
+      //   title: 'Success',
+      //   message: 'Delete Successfully',
+      //   type: 'success',
+      //   duration: 2000
+      // })
+      // this.list.splice(index, 1)
+      this.$confirm('此操作将永久删除该图书, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        // TODO real delete api
+        this.$message({
+          type: 'success',
+          message: '删除成功!'
+        });
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });
+      });
     },
     handleFetchPv(pv) {
       fetchPv(pv).then(response => {
