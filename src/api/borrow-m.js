@@ -4,14 +4,15 @@ export function fetchList(query) {
   const params = {
     id: query.id,
     resourceName: query.book_name,
-    author: query.author,
+    resourceId: query.book_id,
+    userId: query.user_id,
     pageNum: query.page - 1,
     pageSize: query.limit,
     sort: query.sort.substr(1),
     order: query.sort[0]==='+'?'asc':'desc'
   }
   return request({
-    url: '/vue-element-admin/article/list',
+    url: '/record/get',
     method: 'get',
     params: params
   })

@@ -49,12 +49,12 @@
           <span>{{ row.author }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="馆藏数目" prop="storage_all" sortable="custom" align="center">
+      <el-table-column label="馆藏数目" prop="storageAll" sortable="custom" align="center" :class-name="getSortClass('storageAll')">
         <template slot-scope="{row}">
           <span>{{ row.storage_all }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="可借数目" prop="storage_avail" sortable="custom" align="center">
+      <el-table-column label="可借数目" prop="storageAvail" sortable="custom" align="center" :class-name="getSortClass('storageAvail')">
         <template slot-scope="{row}">
           <span>{{ row.storage_avail }}</span>
         </template>
@@ -93,13 +93,13 @@
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="图书全称" prop="name">
-              <el-input v-model="temp.name" placeholder="Please input" />
+              <el-input v-model="temp.name" placeholder="例：《三国演义》" />
             </el-form-item>
             <el-form-item label="作者名" prop="author">
-              <el-input v-model="temp.author" placeholder="Please input" />
+              <el-input v-model="temp.author" placeholder="请输入全名" />
             </el-form-item>
             <el-form-item label="作者国籍" prop="country">
-              <el-select v-model="temp.country" filterable class="filter-item" placeholder="Please select">
+              <el-select v-model="temp.country" filterable class="filter-item" placeholder="请选择">
                 <el-option-group v-for="group in countryOptions":key="group.label" :label="group.label">
                    <el-option v-for="item in group.options" :key="item.label" :label="item.label" :value="item.label">
                      <span style="float: left">{{ item.label }}</span>
@@ -109,19 +109,19 @@
               </el-select>
             </el-form-item>
             <el-form-item label="图书语言" prop="language">
-              <el-select v-model="temp.language" placeholder="Please input" class="filter-item">
+              <el-select v-model="temp.language" placeholder="请选择" class="filter-item">
                 <el-option label="中文" value="中文" />
                 <el-option label="外语" value="外语" />
               </el-select>
             </el-form-item>
             <el-form-item label="馆藏数目" prop="storage_all">
-              <el-input v-model="temp.storage_all" placeholder="Please input" />
+              <el-input v-model="temp.storage_all" type="number" placeholder="请输入数字" />
             </el-form-item>
             <el-form-item label="可借数目" prop="storage_avail">
-              <el-input v-model="temp.storage_avail" placeholder="Please input" />
+              <el-input v-model="temp.storage_avail" type="number" placeholder="请输入数字" />
             </el-form-item>
             <el-form-item label="ISBN" prop="ISBN">
-              <el-input v-model="temp.ISBN" placeholder="Please input" />
+              <el-input v-model="temp.ISBN" placeholder="请输入" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -133,7 +133,7 @@
               </el-date-picker>
             </el-form-item>
             <el-form-item label="出版社" prop="publisher">
-              <el-input v-model="temp.publisher" placeholder="Please input" />
+              <el-input v-model="temp.publisher" placeholder="请输入全称" />
             </el-form-item>
             <el-form-item label="所属类别" prop="category">
                <el-cascader
@@ -143,19 +143,16 @@
                </el-cascader>
             </el-form-item>
             <el-form-item label="中图分类号" prop="zhongtu">
-              <el-input v-model="temp.zhongtu" placeholder="Please input" />
+              <el-input v-model="temp.zhongtu" placeholder="请输入" />
             </el-form-item>
             <el-form-item label="可图分类号" prop="ketu">
-              <el-input v-model="temp.ketu" placeholder="Please input" />
+              <el-input v-model="temp.ketu" placeholder="请输入" />
             </el-form-item>
             <el-form-item label="译者" prop="translator" v-if="temp.language==='中文' && temp.country!=='中国'">
-              <el-input v-model="temp.translator" placeholder="Please input" />
-            </el-form-item>
-            <el-form-item label="封面" prop="image">
-              <el-input v-model="temp.image" placeholder="Please input" /><!--TODO 图片上传-->
+              <el-input v-model="temp.translator" placeholder="请输入" />
             </el-form-item>
             <el-form-item label="权限等级" prop="access">
-              <el-select v-model="temp.access" class="filter-item" placeholder="Please select">
+              <el-select v-model="temp.access" class="filter-item" placeholder="请选择权限等级">
                 <el-option v-for="item in accessOptions" :key="item.value" :label="item.label" :value="item.value" />
               </el-select>
             </el-form-item>
@@ -170,7 +167,7 @@
 <!--          <el-rate v-model="temp.importance" :colors="['#99A9BF', '#F7BA2A', '#FF9900']" :max="3" style="margin-top:8px;" />-->
 <!--        </el-form-item>-->
 <!--        <el-form-item label="Remark">-->
-<!--          <el-input v-model="temp.remark" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" placeholder="Please input" />-->
+<!--          <el-input v-model="temp.remark" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" placeholder="请输入" />-->
 <!--        </el-form-item>-->
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -250,6 +247,13 @@ export default {
   components: { Pagination },
   directives: { waves },
   data() {
+    let checkStorage = (rule, value, callback) => {
+        if (value < 0 ) {
+          callback(new Error('库存必须大于等于0'));
+        } else {
+          callback();
+        }
+      };
     return {
       countryOptions: country,
       tableKey: 0,
@@ -265,7 +269,7 @@ export default {
       },
       calendarTypeOptions,
       temp: {
-        id: undefined,
+        id: -1,
         name: '',
         storage_all: 0,
         storage_avail: 0,
@@ -287,15 +291,17 @@ export default {
       textMap: {
         update: '编辑',
         create: '新建'
-      }, // TODO 权限的修改
+      },
       accessOptions: [{ value: 'ALL', label: '所有人可借' }, { value: 'NONE', label: '不可借'}],
       dialogPvVisible: false,
       pvData: [],
       rules: {
-        name: [{ required: true, message: 'name is required', trigger: 'change' }],
-        author: [{ required: true, message: 'author is required', trigger: 'change' }],
-        storage_all: [{ required: true, message: 'title is required', trigger: 'blur' }],
-        storage_avail: [{ required: true, message: 'title is required', trigger: 'blur' }]
+        name: [{ required: true, message: '图书名称必填', trigger: 'change' }],
+        author: [{ required: true, message: '作者必填', trigger: 'change' }],
+        storage_all: [{ required: true, message: '馆藏书目必填', trigger: 'blur' },
+          {validator: checkStorage, trigger: 'blur'}],
+        storage_avail: [{ required: true, message: '可借数目必填', trigger: 'blur' },
+          {validator: checkStorage, trigger: 'blur'}]
       },
       downloadLoading: false,
       categoryOptions: category
@@ -353,12 +359,21 @@ export default {
     resetTemp() {
       this.temp = {
         id: undefined,
-        importance: 1,
-        remark: '',
-        timestamp: new Date(),
-        title: '',
-        status: 'published',
-        type: ''
+        name: '',
+        storage_all: 0,
+        storage_avail: 0,
+        author: '',
+        language: '',
+        country: '',
+        ISBN: '',
+        translator: '',
+        publisher: '',
+        publish_date: '',
+        category: [],
+        zhongtu: '',
+        ketu: '',
+        image: '',
+        access: ''
       }
     },
     handleCreate() {

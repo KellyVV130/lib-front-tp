@@ -38,6 +38,12 @@ export const constantRoutes = [
   },
 
   {
+    path: '/auth-redirect',
+    component: () => import('@/views/login/auth-redirect'),
+    hidden: true
+  },
+
+  {
     path: '/404',
     component: () => import('@/views/404'),
     hidden: true
@@ -53,15 +59,16 @@ export const constantRoutes = [
       name: 'Books',
       component: () => import('@/views/book/Books'),
       meta: { title: '图书列表', icon: 'el-icon-s-management' }
-    }] // TODO 这里好像不能这么写
+    }, {
+      path: 'book',
+      name: 'Book',
+      component: () => import('@/views/book/index'),
+      meta: { title: '图书详情', icon: 'el-icon-s-management' },
+      hidden: true
+    }]
   },
 
-  // {
-  //     path: 'book',
-  //     name: 'Book',
-  //     component: () => import('@/views/book/index'),
-  //     meta: { title: '图书详情', icon: 'el-icon-s-management' }
-  //   }
+
 
   {
     path: '/borrow',
@@ -92,14 +99,14 @@ export const constantRoutes = [
       {
         path: 'index',
         name: 'History',
-        component: () => import('@/views/borrow-m/index'),
+        component: () => import('@/views/borrow/index'),
         meta: { title: '借阅记录', icon: 'el-icon-user-solid' }
       }
     ]
   }
 ]
 
-export const asyncRouterMap = [
+export const asyncRoutes = [
   {
     path: '/book-manage',
     component: Layout,
@@ -146,7 +153,7 @@ export const asyncRouterMap = [
 const createRouter = () => new Router({
   // mode: 'history', // require service support
   scrollBehavior: () => ({ y: 0 }),
-  routes: constantRoutes.concat(asyncRouterMap)
+  routes: constantRoutes // .concat(asyncRoutes)
 })
 
 const router = createRouter()// .addRoutes(asyncRouterMap)
