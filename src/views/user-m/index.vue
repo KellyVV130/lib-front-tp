@@ -9,28 +9,28 @@
       fit
       highlight-current-row
     >
-      <el-table-column label="ID" width="130" align="center">
+      <el-table-column label="用户ID" width="142" align="center">
         <template slot-scope="scope">
 <!--          {{ scope.$index }}-->
           {{ scope.row.id }}
         </template>
       </el-table-column>
-      <el-table-column label="Username" width="200" align="center">
+      <el-table-column label="用户名" width="180" align="center">
         <template slot-scope="scope">
           {{ scope.row.username }}
         </template>
       </el-table-column>
-      <el-table-column label="Password" width="200" align="center">
+      <el-table-column label="密码" width="180" align="center">
         <template slot-scope="scope">
           {{ scope.row.password }}
         </template>
       </el-table-column>
-      <el-table-column label="CreateTime" width="200" align="center">
+      <el-table-column label="创建时间" width="200" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.createTime }}</span>
         </template>
       </el-table-column>
-      <el-table-column class-name="status-col" label="Role" width="110" align="center">
+      <el-table-column class-name="status-col" label="角色" width="110" align="center">
         <template slot-scope="scope">
           <el-tag :type="scope.row.role | statusFilter">{{ scope.row.role }}</el-tag>
         </template>
@@ -43,23 +43,23 @@
       </el-table-column>
     </el-table>
     <pagination v-show="pageInfo.total>0" :total="pageInfo.total" :page.sync="pageInfo.currentPage" :limit.sync="pageInfo.pageSize" @pagination="changePage"></pagination>
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogVisible" width="80%">
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogVisible" width="60%">
       <el-form ref="dataForm" :model="userInfo" label-position="left" label-width="90px">
         <el-row :gutter="20">
           <el-col :span="12" :offset="6">
-            <el-form-item label="id" prop="id">
+            <el-form-item label="用户ID" prop="id">
               <el-input v-model="userInfo.id" placeholder="Please input" />
             </el-form-item>
-            <el-form-item label="username" prop="username">
+            <el-form-item label="用户名" prop="username">
               <el-input v-model="userInfo.username" placeholder="Please input" />
             </el-form-item>
-            <el-form-item label="password" prop="password">
+            <el-form-item label="密码" prop="password">
               <el-input v-model="userInfo.password" placeholder="Please input" />
             </el-form-item>
-            <el-form-item label="createTime" prop="createTime">
+            <el-form-item label="创建时间" prop="createTime">
               <el-input v-model="userInfo.createTime" placeholder="Please input" />
             </el-form-item>
-            <el-form-item label="role" prop="role">
+            <el-form-item label="角色" prop="role">
               <el-radio v-for="role in roles" :key="role" v-model="userInfo.role" :label="role">
                 {{ role }}
               </el-radio>
@@ -141,7 +141,8 @@ export default {
         currentPage: this.pageInfo.currentPage
       }
       getUsers(params).then(response => {
-        this.list = response.data.list
+        this.list = response.data.userList
+        this.pageInfo.total = response.data.totalNum
         this.listLoading = false
       })
     },

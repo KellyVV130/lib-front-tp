@@ -28,17 +28,19 @@ export function updateUser(params) {
 }
 
 // 查
+// 查询第几页用户列表
 export function getUsers(params) {
   return request({
-    url: '/api/user/getUserList',
+    url: '/user/all',
     method: 'get',
     params
   })
 }
 
+// 查询某用户信息
 export function getUserInfo(params) {
   return request({
-    urls: '/api/user/getUserInfo',
+    urls: '/user/get',
     method: 'get',
     params
   })
