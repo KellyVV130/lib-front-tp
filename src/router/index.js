@@ -81,13 +81,13 @@ export const constantRoutes = [
         path: 'preserve',
         name: 'Preserve',
         component: () => import('@/views/borrow/index'),
-        meta: { title: '图书借阅', icon: 'table' }
+        meta: { title: '图书借阅', icon: 'table', role: ['user', 'admin', 'super'] }
       },
       {
         path: 'postpone',
         name: 'Postpone',
         component: () => import('@/views/borrow/Postpone'),
-        meta: { title: '借阅延期', icon: 'table' }
+        meta: { title: '借阅延期', icon: 'table', role: ['user', 'admin', 'super'] }
       }
     ]
   },
@@ -100,7 +100,7 @@ export const constantRoutes = [
         path: 'index',
         name: 'History',
         component: () => import('@/views/borrow/index'),
-        meta: { title: '借阅记录', icon: 'el-icon-user-solid' }
+        meta: { title: '借阅记录', icon: 'el-icon-user-solid', role: ['user', 'admin', 'super'] }
       }
     ]
   }
@@ -115,7 +115,7 @@ export const asyncRoutes = [
       path: 'book-manage',
       name: 'BookManage',
       component: () => import('@/views/book-m/index'),
-      meta: { title: '图书管理', icon: 'el-icon-s-management', role: ['admin', 'super_editor'] }
+      meta: { title: '图书管理', icon: 'el-icon-s-management', role: ['admin', 'super'] }
     }]
   },
 
@@ -130,7 +130,7 @@ export const asyncRoutes = [
         path: 'table',
         name: 'Table',
         component: () => import('@/views/borrow-m/index'),
-        meta: { title: '借阅记录管理', icon: 'table', role: ['admin', 'super_editor'] }
+        meta: { title: '借阅记录管理', icon: 'table', role: ['admin', 'super'] }
       }
     ]
   },
@@ -143,7 +143,7 @@ export const asyncRoutes = [
         path: 'index',
         name: 'UserManage',
         component: () => import('@/views/user-m/index'),
-        meta: { title: '用户管理', icon: 'el-icon-user-solid', role: ['admin', 'super_editor'] }
+        meta: { title: '用户管理', icon: 'el-icon-user-solid', role: ['admin', 'super'] }
       }
     ]
   },

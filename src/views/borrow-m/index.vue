@@ -25,7 +25,7 @@
           <el-button v-waves class="filter-item" style=" margin-left: 20px;" type="primary" icon="el-icon-search" @click="handleFilter">
             搜索
           </el-button>
-          <el-button class="filter-item" style="margin-right: 20px;" type="primary" icon="el-icon-edit" @click="handleCreate">
+          <el-button class="filter-item" style="margin-right: 20px;" type="primary" icon="el-icon-edit" @click="handleCreate" v-permission="['super']">
             新建
           </el-button>
     </div>
@@ -87,12 +87,12 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="150" class-name="small-padding fixed-width" v-permission="['admin']">
+      <el-table-column label="操作" align="center" width="150" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
             编辑
           </el-button>
-          <el-button size="mini" type="danger" @click="handleDelete(row,$index)">
+          <el-button size="mini" type="danger" @click="handleDelete(row,$index)" v-permission="['super']">
             删除
           </el-button>
         </template>
@@ -137,7 +137,7 @@
         <el-button @click="dialogFormVisible = false">
           取消
         </el-button>
-        <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
+        <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()" :disabled="!checkPermission['super']">
           提交
         </el-button>
       </div>
@@ -153,6 +153,7 @@ import { parseTime } from '@/utils'
 import {country} from '@/utils/country'
 import Pagination from '@/components/Pagination'
 import {category} from "@/utils/category"; // secondary package based on el-pagination
+import checkPermission from "@/utils/permission";
 
 
 const fakeData = [
@@ -453,20 +454,6 @@ export default {
         this.dialogPvVisible = true
       })
     },
-    // handleDownload() {
-    //   this.downloadLoading = true
-    //   import('@/vendor/Export2Excel').then(excel => {
-    //     const tHeader = ['timestamp', 'title', 'type', 'importance', 'status']
-    //     const filterVal = ['timestamp', 'title', 'type', 'importance', 'status']
-    //     const data = this.formatJson(filterVal)
-    //     excel.export_json_to_excel({
-    //       header: tHeader,
-    //       data,
-    //       filename: 'table-list'
-    //     })
-    //     this.downloadLoading = false
-    //   })
-    // },
     formatJson(filterVal) {
       return this.list.map(v => filterVal.map(j => {
         if (j === 'timestamp') {
@@ -479,7 +466,8 @@ export default {
     getSortClass: function(key) {
       const sort = this.listQuery.sort
       return sort === `+${key}` ? 'ascending' : 'descending'
-    }
+    },
+    checkPermission
   }
 }
 </script>

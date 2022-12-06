@@ -65,7 +65,7 @@ const actions = {
           return reject('Verification failed, please Login again.')
         }
 
-        // const { id, name, card, avatar, roled } = data
+        // const { id, name, card, avatar, roles } = data
         const { roles, name, avatar } = data
 
         // roles must be a non-empty array
