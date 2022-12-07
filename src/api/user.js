@@ -3,7 +3,7 @@ import request from '@/utils/request'
 export function login(params) {
   return request({
     url: '/auth/login',
-    method: 'post',
+    method: 'get',
     params: params
   })
 }
