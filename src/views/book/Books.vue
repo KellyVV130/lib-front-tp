@@ -41,7 +41,7 @@
         prop="name"
         label="书名"
         sortable
-        width="300">
+        width="290">
       </el-table-column>
       <el-table-column
         prop="author"
@@ -55,14 +55,24 @@
         width="250">
       </el-table-column>
       <el-table-column
-        width="120"
+        width="100"
         prop="storage_all"
         label="馆藏书目">
       </el-table-column>
       <el-table-column
-        width="120"
+        width="100"
         prop="storage_avail"
         label="可借数目">
+      </el-table-column>
+      <el-table-column
+        width="100"
+        prop="xxx"
+        label="借阅">
+        <template slot-scope="scope">
+          <el-button
+            size="mini"
+            @click="handleBorrow(scope.$index, scope.row)">借书</el-button>
+        </template>
       </el-table-column>
     </el-table>
     <div style="margin-top: 20px; margin-left: 30%">
@@ -82,6 +92,24 @@
 <script>
   export default {
     methods: {
+      handleBorrow(index, row) {
+        console.log(index, row);
+        this.$confirm('确认借阅此本书籍, 是否继续?', '借阅确认', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$message({
+            type: 'success',
+            message: '借阅成功!'
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消'
+          });
+        });
+      },
       handleQuery() {
         const tableData = this.tableData
         this.tableData = tableData.filter(
@@ -137,7 +165,34 @@
           author:'阿巴阿巴',
           publisher:'人民出版社',
           storage_all:6,
-          storage_avail:3
+          storage_avail:3,
+          ISBN:'3-11-003242-3',
+          country:'中国',
+          language:'中文',
+          publish_date:2008,
+          zhongtu:'I523.84'
+        },  {
+          name:'人工智能原理、技术及应用',
+          author:'安俊秀',
+          publisher:'机械工业出版社',
+          storage_all:2,
+          storage_avail:2,
+          ISBN:'978-7-111-70777-6',
+          country:'中国',
+          language:'中文',
+          publish_date:2022,
+          zhongtu:'TP18'
+        },  {
+          name:'人工智能导论',
+          author:'金军委',
+          publisher:'北京大学出版社',
+          storage_all:2,
+          storage_avail:2,
+          ISBN:'978-7-301-33118-7',
+          country:'中国',
+          language:'中文',
+          publish_date:2022,
+          zhongtu:'TP18'
         }, {
           name:'马小跳4',
           author:'阿巴阿巴',
