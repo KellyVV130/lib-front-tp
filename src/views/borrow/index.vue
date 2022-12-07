@@ -1,7 +1,9 @@
 <template>
   <div>
-    <el-calendar v-model="value" style="width:380px; height: 500px; float: right; margin-top: 5px" >
+    <el-card class="box-card-cal">
+    <el-calendar v-model="value" style="width:380px; height: 500px;" >
     </el-calendar>
+    </el-card>
     <el-card class="box-card">
       <div slot="header" class="clearfix">
         <span style="font-size: large; font-weight: bolder">借阅记录</span>
@@ -22,7 +24,7 @@
         <el-table-column
           prop="author"
           label="作者"
-          width="180">
+          width="175">
         </el-table-column>
         <el-table-column
           prop="startDate"
@@ -37,7 +39,7 @@
         <el-table-column
           prop="status"
           label="状态"
-          width="80">
+          width="50">
           <template slot-scope="scope">
             <i v-if="scope.row.status === 1 " class="el-icon-circle-check"></i>
             <i v-if="scope.row.status === 0 " class="el-icon-error"></i>
@@ -121,9 +123,17 @@ export default {
   }
 
   .box-card {
-    width: 820px;
+    width: 789px;
     margin-top: 30px;
     margin-left: 10px;
+    height: 660px;
+  }
+
+  .box-card-cal {
+    float: right;
+    width: 388px;
+    margin-right: 13px;
+    height: 660px;
   }
 
 </style>
