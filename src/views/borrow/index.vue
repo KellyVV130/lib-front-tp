@@ -12,8 +12,7 @@
         style="width: 100%">
         <el-table-column
           type="index"
-          label="编号"
-          :index="indexMethod">
+          label="编号">
         </el-table-column>
         <el-table-column
           prop="name"
@@ -58,32 +57,44 @@ export default {
       tableData: [{
         name:'羊羊羊羊羊羊羊羊羊羊羊羊羊小跳',
         author:'拉巴阿巴阿巴·阿巴阿巴',
-        startDate: '2016-05-02',
-        endDate:'2016-05-22',
+        startDate: '2022-05-02',
+        endDate:'2022-05-22',
         status:1
       },{
         name:'马大跳2',
         author:'阿巴阿巴',
-        startDate: '2016-05-02',
-        endDate:'2016-06-02',
+        startDate: '2022-05-02',
+        endDate:'2022-06-02',
         status:0
       },{
         name:'人工智能导论',
         author:'金军委',
-        startDate: '2016-05-03',
-        endDate:'2016-05-11',
+        startDate: '2022-05-03',
+        endDate:'2022-05-11',
         status:1
       },{
         name:'人工智能原理、技术及应用',
         author:'安俊秀',
-        startDate: '2016-05-03',
-        endDate: '2016-05-11',
+        startDate: '2022-05-03',
+        endDate: '2022-05-11',
         status:1
       },{
         name:'马小跳4',
         author:'阿巴阿巴',
-        startDate: '2016-05-05',
-        endDate: '2016-06-05',
+        startDate: '2022-05-05',
+        endDate: '2022-06-05',
+        status:0
+      },{
+        name:'马小跳7',
+        author:'阿巴阿巴',
+        startDate: '2022-05-05',
+        endDate: '2022-06-05',
+        status:0
+      },{
+        name:'马大跳8',
+        author:'阿巴阿巴',
+        startDate: '2022-05-05',
+        endDate: '2022-06-05',
         status:0
       }]
     }
