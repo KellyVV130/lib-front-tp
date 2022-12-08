@@ -60,8 +60,8 @@
               <el-input v-model="userInfo.createTime" placeholder="Please input" />
             </el-form-item>
             <el-form-item label="角色" prop="role">
-              <el-radio v-for="role in roles" :key="role" v-model="userInfo.role" :label="role">
-                {{ role }}
+              <el-radio v-for="role in roles" :key="role.value" v-model="userInfo.role" :label="role.value">
+                {{ role.label }}
               </el-radio>
             </el-form-item>
           </el-col>
@@ -106,7 +106,20 @@ export default {
       },
       listLoading: true,
       checkedRole: [],
-      roles: ['user', 'staff'],
+      roles: [
+        {
+          value: 'user',
+          label: '普通用户'
+        },
+        {
+          value: 'admin',
+          label: '工作人员'
+        },
+        {
+          value: 'super',
+          label: '超级管理员'
+        }
+      ],
       textMap: {
         'edit': '编辑',
         'create': '添加'

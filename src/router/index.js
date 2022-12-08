@@ -36,7 +36,11 @@ export const constantRoutes = [
     component: () => import('@/views/login/index'),
     hidden: true
   },
-
+  {
+    path: '/register',
+    component: () => import('@/views/register/index'),
+    hidden: true
+  },
   {
     path: '/auth-redirect',
     component: () => import('@/views/login/auth-redirect'),
@@ -77,17 +81,17 @@ export const constantRoutes = [
     name: 'Borrow',
     meta: { title: '图书借阅', icon: 'table' },
     children: [
-      {
+      /*{
         path: 'preserve',
         name: 'Preserve',
         component: () => import('@/views/borrow/index'),
-        meta: { title: '图书借阅', icon: 'table', role: ['user', 'admin', 'super'] }
-      },
+        meta: { title: '借阅记录', icon: 'table', role: ['user', 'admin', 'super'] }
+      },*/
       {
         path: 'postpone',
         name: 'Postpone',
         component: () => import('@/views/borrow/Postpone'),
-        meta: { title: '借阅延期', icon: 'table', role: ['user', 'admin', 'super'] }
+        meta: { title: '借阅延期', icon: 'el-icon-user-solid', role: ['user', 'admin', 'super'] }
       }
     ]
   },
@@ -100,7 +104,7 @@ export const constantRoutes = [
         path: 'index',
         name: 'History',
         component: () => import('@/views/borrow/index'),
-        meta: { title: '借阅记录', icon: 'el-icon-user-solid', role: ['user', 'admin', 'super'] }
+        meta: { title: '借阅记录', icon: 'table', role: ['user', 'admin', 'super'] }
       }
     ]
   }
