@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 增
 export function createUser(data) {
   return request({
-    url: 'user/create',
+    url: 'user/register',
     method: 'post',
     data
   })

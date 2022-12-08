@@ -36,11 +36,11 @@
           <span>{{ scope.row.cardId }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="头像" width="120" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.avatar }}</span>
-        </template>
-      </el-table-column>
+<!--      <el-table-column label="头像" width="120" align="center">-->
+<!--        <template slot-scope="scope">-->
+<!--          <span>{{ scope.row.avatar }}</span>-->
+<!--        </template>-->
+<!--      </el-table-column>-->
       <el-table-column class-name="status-col" label="角色" width="120" align="center">
         <template slot-scope="scope">
           <el-tag :type="scope.row.role | roleFilter">{{ roles.find(r => r.value === scope.row.role).label }}</el-tag>
@@ -78,9 +78,9 @@
             <el-form-item label="借阅卡ID" prop="cardId">
               <el-input v-model="userInfo.cardId" placeholder="Please input" />
             </el-form-item>
-            <el-form-item label="头像" prop="avatar">
-              <el-input v-model="userInfo.avatar" placeholder="Please input" />
-            </el-form-item>
+<!--            <el-form-item label="头像" prop="avatar">-->
+<!--              <el-input v-model="userInfo.avatar" placeholder="Please input" />-->
+<!--            </el-form-item>-->
             <el-form-item label="角色" prop="role">
               <el-radio v-for="role in roles" :key="role.value" v-model="userInfo.role" :label="role.value">
                 {{ role.label }}
@@ -116,9 +116,9 @@
 <!--            <el-form-item label="借阅卡ID" prop="cardId">-->
 <!--              <el-input v-model="userInfo.cardId" placeholder="Please input" />-->
 <!--            </el-form-item>-->
-            <el-form-item label="头像" prop="avatar">
-              <el-input v-model="userInfo.avatar" placeholder="Please input" />
-            </el-form-item>
+<!--            <el-form-item label="头像" prop="avatar">-->
+<!--              <el-input v-model="userInfo.avatar" placeholder="Please input" />-->
+<!--            </el-form-item>-->
             <el-form-item label="角色" prop="role">
               <el-radio v-for="role in roles" :key="role.value" v-model="userInfo.role" :label="role.value">
                 {{ role.label }}

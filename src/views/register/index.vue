@@ -3,7 +3,7 @@
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
 
       <div class="title-container">
-        <h3 class="title">Register Form</h3>
+        <h3 class="title">注册</h3>
       </div>
 
       <el-form-item prop="username">
@@ -59,7 +59,7 @@ export default {
   data() {
     return {
       loginForm: {
-        username: '',
+        name: '',
         password: '',
         avatar: '',
         role: ''
@@ -92,12 +92,8 @@ export default {
     handleRegister() {
       console.log('registerForm:', this.loginForm)
       register(this.loginForm).then(response => {
-        if (response.data.code === '200') {
-          this.$message.success('注册成功！')
-          this.$router.push('/login')
-        } else {
-          this.$message.error('注册失败！')
-        }
+        this.$message.success('注册成功！')
+        this.$router.push('/login')
       })
     }
   }
