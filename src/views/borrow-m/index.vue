@@ -146,7 +146,7 @@
 </template>
 
 <script>
-import { fetchList, fetchPv, createArticle, updateArticle } from '@/api/borrow-m'
+import { fetchList,  createRecord, updateRecord } from '@/api/borrow-m'
 import waves from '@/directive/waves' // waves directive
 import permission from "@/directive/permission/index";
 import { parseTime } from '@/utils'
@@ -154,57 +154,6 @@ import {country} from '@/utils/country'
 import Pagination from '@/components/Pagination'
 import {category} from "@/utils/category"; // secondary package based on el-pagination
 import checkPermission from "@/utils/permission";
-
-
-const fakeData = [
-    {
-      recordId: 1,
-      user:{
-        id: 1,
-        name: '张三',
-      },
-      resource:{
-        resourceId: 1,
-        resourceName: '《哈利·波特与阿兹卡班的囚徒》',
-        storageAll: 10,
-        storageAvail: 7,
-        author: 'J.K.罗琳',
-        language: '中文',
-        country: '英',
-        ISBN: '7-02-003345-8',
-      },
-      startDate: '2019-02-04',
-      duringTime: 14,
-      endDate: '2019-02-10',
-      borrowed: true,
-      postponed: false,
-      expired: false,
-      postponeDate: undefined,
-    },
-    {
-      recordId: 2,
-      user:{
-        userId: 2,
-        name: '李四',
-      },
-      resource:{
-        resourceId: 1,
-        resourceName: '《哈利·波特与火焰杯》',
-        storageAll: 10,
-        storageAvail: 4,
-        author: 'J.K.罗琳',
-        language: '中文',
-        country: '英',
-        ISBN: '7-02-003345-9',
-      },
-      startDate: '2022-10-04',
-      duringTime: 14,
-      endDate: '2022-10-18',
-      borrowed: true,
-      expired: true,
-      postponeDate: undefined,
-    }
-]
 
 export default {
   name: 'BorrowManage',
@@ -244,20 +193,20 @@ export default {
         sort: '+id'
       },
       temp: {
-        recordId: -1,
+        recordId: undefined,
         user:{
-          id: -1,
-          name: '',
+          id: undefined,
+          name: undefined,
         },
         resource:{
-          resourceId: -1,
+          resourceId: undefined,
           resourceName: '',
           storageAll: 0,
           storageAvail: 0,
-          author: '',
-          language: '',
-          country: '',
-          ISBN: '',
+          author: undefined,
+          language: undefined,
+          country: undefined,
+          isbn: undefined,
         },
         startDate: parseTime(new Date(), '{y}-{m}-{d}'),
         duringTime: 0,
@@ -291,19 +240,14 @@ export default {
   },
   methods: {
     getList() {
-      this.listLoading = true
-      this.list = fakeData
-      this.total = fakeData.length
-      this.listLoading = false
-      // fetchList(this.listQuery).then(response => {
-      //   this.list = response.data.items
-      //   this.total = response.data.total
-      //
-      //   // Just to simulate the time of the request
-      //   setTimeout(() => {
-      //     this.listLoading = false
-      //   }, 1.5 * 1000)
-      // })
+      fetchList(this.listQuery).then(res => {
+        console.log(res)
+        this.list = res.data.list
+        this.total = res.data.totalNum
+        this.listQuery.page = res.data.pageNum
+        this.listQuery.limit = res.data.pageSize
+        this.listLoading = false
+      })
     },
     convertStatus(record){
       if(!record.borrowed) {
@@ -315,13 +259,6 @@ export default {
       } else {
         return '未还'
       }
-    },
-    handleChange(value){
-      console.log(value)
-      // this.temp.category = []
-      // value.forEach(item => {
-      //   this.temp.category = this.temp.category + item
-      // })
     },
     handleFilter() {
       this.listQuery.page = 1
@@ -348,20 +285,20 @@ export default {
     },
     resetTemp() {
       this.temp =  {
-        recordId: -1,
+        recordId: undefined,
         user:{
-          id: -1,
-          name: '',
+          id: undefined,
+          name: undefined,
         },
         resource:{
-          resourceId: -1,
+          resourceId: undefined,
           resourceName: '',
           storageAll: 0,
           storageAvail: 0,
-          author: '',
-          language: '',
-          country: '',
-          ISBN: '',
+          author: undefined,
+          language: undefined,
+          country: undefined,
+          isbn: undefined,
         },
         startDate: parseTime(new Date(), '{y}-{m}-{d}'),
         duringTime: 0,
@@ -383,14 +320,24 @@ export default {
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          createArticle(this.temp).then(() => {
-            this.list.unshift(this.temp) // TODO 获取数据而不是临时添加
-            this.dialogFormVisible = false
-            this.$notify({
-              title: 'Success',
-              message: 'Created Successfully',
-              type: 'success',
-              duration: 2000
+          createRecord(this.temp).then((res) => {
+            if(res.data.successed || res.data.record) {
+              this.$message({
+                message: res.data.reason,
+                type: 'success'
+              })
+              this.getList()
+              this.dialogFormVisible = false
+            } else {
+              this.$message({
+                message: res.data.reason,
+                type: 'error'
+              })
+            }
+          }).catch(e => {
+            this.$message({
+              message: e,
+              type: 'error'
             })
           })
         }
@@ -407,17 +354,24 @@ export default {
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          const tempData = Object.assign({}, this.temp)
-          tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
-          updateArticle(tempData).then(() => {
-            const index = this.list.findIndex(v => v.id === this.temp.id)
-            this.list.splice(index, 1, this.temp)
-            this.dialogFormVisible = false
-            this.$notify({
-              title: 'Success',
-              message: 'Update Successfully',
-              type: 'success',
-              duration: 2000
+          updateRecord(this.temp).then((res) => {
+            if(res.data.successed || res.data.record) {
+              this.$message({
+                message: res.data.reason,
+                type: 'success'
+              })
+              this.getList()
+              this.dialogFormVisible = false
+            } else {
+              this.$message({
+                message: res.data.reason,
+                type: 'error'
+              })
+            }
+          }).catch(e => {
+            this.$message({
+              message: e,
+              type: 'error'
             })
           })
         }
@@ -447,12 +401,6 @@ export default {
           message: '已取消删除'
         });
       });
-    },
-    handleFetchPv(pv) {
-      fetchPv(pv).then(response => {
-        this.pvData = response.data.pvData
-        this.dialogPvVisible = true
-      })
     },
     formatJson(filterVal) {
       return this.list.map(v => filterVal.map(j => {

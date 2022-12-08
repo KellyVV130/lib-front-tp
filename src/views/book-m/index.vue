@@ -71,7 +71,7 @@
       </el-table-column>
       <el-table-column label="ISBN" width="150px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.ISBN }}</span>
+          <span>{{ row.isbn }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="150" class-name="small-padding fixed-width">
@@ -120,8 +120,8 @@
             <el-form-item label="可借数目" prop="storageAvail">
               <el-input v-model="temp.storageAvail" type="number" placeholder="请输入数字" />
             </el-form-item>
-            <el-form-item label="ISBN" prop="ISBN">
-              <el-input v-model="temp.ISBN" placeholder="请输入" />
+            <el-form-item label="ISBN" prop="isbn">
+              <el-input v-model="temp.isbn" placeholder="请输入" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -184,7 +184,7 @@
 </template>
 
 <script>
-import { fetchList, createArticle, updateArticle } from '@/api/book-m'
+import { fetchList, createArticle, updateArticle, deleteArticle } from '@/api/book-m'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import {country} from '@/utils/country'
@@ -224,7 +224,7 @@ export default {
       listLoading: true,
       listQuery: {
         page: 1,
-        limit: 20,
+        limit: 10,
         resourceName: undefined,
         author: undefined,
         sort: '+resourceId'
@@ -238,7 +238,7 @@ export default {
         author: '',
         language: '',
         country: '',
-        ISBN: '',
+        isbn: '',
         translator: undefined,
         publisher: undefined,
         publishDate: undefined,
@@ -254,7 +254,7 @@ export default {
         update: '编辑',
         create: '新建'
       },
-      accessOptions: [{ value: 'ALL', label: '所有人可借' }, { value: 'NONE', label: '不可借'}],
+      accessOptions: [{ value: 1, label: '1(最严格)' }, { value: 2, label: '2'}, { value: 3, label: '3'}, { value: 4, label: '4'}],
       dialogPvVisible: false,
       pvData: [],
       rules: {
@@ -263,7 +263,8 @@ export default {
         storageAll: [{ required: true, message: '馆藏书目必填', trigger: 'blur' },
           {validator: checkStorage, trigger: 'blur'}],
         storageAvail: [{ required: true, message: '可借数目必填', trigger: 'blur' },
-          {validator: checkStorage, trigger: 'blur'}]
+          {validator: checkStorage, trigger: 'blur'}],
+        publishDate: [{required: true, message: '出版日期必填', trigger: 'blur'}]
       },
       downloadLoading: false,
       categoryOptions: category
@@ -317,7 +318,7 @@ export default {
         author: '',
         language: '',
         country: '',
-        ISBN: '',
+        isbn: '',
         translator: undefined,
         publisher: undefined,
         publishDate: undefined,
@@ -371,21 +372,24 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           updateArticle(this.temp).then((res) => {
-            if(res.status === 200) {
+            if(res.data.successed || res.data.resource!==null) {
               this.dialogFormVisible = false
               this.$message({
-                message: '登出成功',
+                message: '修改成功',
                 type: 'success'
               })
               this.getList()
             } else {
               this.$message({
-                message: '失败',
+                message: res.data.reason,
                 type: 'error'
               })
             }
           }).catch(e => {
-            console.log(e)
+            this.$message({
+              message: e,
+              type: 'error'
+            })
           })
         }
       })
@@ -403,11 +407,26 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        // TODO real delete api
-        this.$message({
-          type: 'success',
-          message: '删除成功!'
-        });
+        deleteArticle(row.resourceId).then(res => {
+          if(res.data.successed) {
+             this.$message({
+                type: 'success',
+                message: '删除成功!'
+              });
+             this.getList()
+          } else {
+            this.$message({
+              type: 'error',
+              message: res.data.reason
+            })
+          }
+        }).catch(e => {
+          this.$message({
+            type: 'error',
+            message: e
+          })
+        })
+
       }).catch(() => {
         this.$message({
           type: 'info',
