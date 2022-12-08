@@ -1,4 +1,4 @@
-<template>
+33<template>
   <div class="login-container">
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
 
@@ -36,7 +36,7 @@
           auto-complete="on"
           @keyup.enter.native="handleLogin"
         />
-        <span class="show-pwd" @click="showPwd">
+        <span class="show-pwd">
           <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
         </span>
       </el-form-item>
@@ -55,8 +55,8 @@ export default {
   data() {
     return {
       loginForm: {
-        name: '999',
-        password: '999'
+        name: 'xh',
+        password: '123'
       },
       loginRules: {
         name: [{ required: true, trigger: 'blur' }],
@@ -64,27 +64,57 @@ export default {
       },
       loading: false,
       passwordType: 'password',
-      redirect: undefined
+      redirect: undefined,
+      otherQuery: ''
     }
   },
-  // watch: {
-  //   $route: {
-  //     handler: function(route) {
-  //       this.redirect = route.query && route.query.redirect
-  //     },
-  //     immediate: true
-  //   }
-  // },
+  watch: {
+    $route: {
+      handler: function(route) {
+        const query = route.query
+        if (query) {
+          this.redirect = this.redirect || query.redirect
+          this.otherQuery = this.getOtherQuery(query)
+        }
+      },
+      immediate: true
+    }
+  },
   methods: {
     handleLogin() {
-      login(this.loginForm).then(response => {
-        if (response.data.code === '200') {
-          this.$message.success('登陆成功！')
-          this.$router.push('/')
+      // login(this.loginForm).then(response => {
+      //   if (response.status === 200) {
+      //     this.$message.success('登录成功！')
+      //     this.$router.push('/')
+      //   } else {
+      //     this.$message.error('登录失败')
+      //   }
+      // })
+      this.$refs.loginForm.validate(valid => {
+        if (valid) {
+          this.loading = true
+          this.$store.dispatch('user/login', this.loginForm)
+            .then(() => {
+              console.log(this.redirect)
+              this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
+              this.loading = false
+            })
+            .catch(() => {
+              this.loading = false
+            })
         } else {
-          this.$message.error('登陆失败')
+          console.log('格式错误，提交失败！')
+          return false
         }
       })
+    },
+    getOtherQuery(query) {
+      return Object.keys(query).reduce((acc, cur) => {
+        if (cur !== 'redirect') {
+          acc[cur] = query[cur]
+        }
+        return acc
+      }, {})
     }
   }
 }

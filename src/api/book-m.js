@@ -1,11 +1,11 @@
 import request from '@/utils/request'
 
 export function fetchList(query) {
-  const params = {
+  const data = {
     id: query.id,
-    resourceName: query.book_name,
+    resourceName: query.resourceName,
     author: query.author,
-    pageNum: query.page - 1,
+    pageNum: query.page,
     pageSize: query.limit,
     sort: query.sort.substr(1),
     order: query.sort[0]==='+'?'asc':'desc'
@@ -13,7 +13,7 @@ export function fetchList(query) {
   return request({
     url: '/resource/public/list',
     method: 'post',
-    params
+    data
   })
 }
 
@@ -27,6 +27,7 @@ export function fetchArticle(id) {
 }
 
 export function createArticle(data) {
+  delete data.category
   return request({
     url: '/resource/add',
     method: 'post',

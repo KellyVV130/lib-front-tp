@@ -1,7 +1,7 @@
 import request from '@/utils/request'
 
 export function fetchList(query) {
-  const params = {
+  const data = {
     id: query.id,
     resourceName: query.book_name,
     resourceId: query.book_id,
@@ -14,7 +14,7 @@ export function fetchList(query) {
   return request({
     url: '/record/get',
     method: 'post',
-    params
+    data
   })
 }
 

@@ -33,9 +33,9 @@
       style="width: 100%; margin-top: 20px;"
       @sort-change="sortChange"
     >
-      <el-table-column label="编号" prop="id" sortable="custom" align="center" width="80" :class-name="getSortClass('id')">
+      <el-table-column label="编号" prop="resourceId" sortable="custom" align="center" width="80" :class-name="getSortClass('resourceId')">
         <template slot-scope="{row}">
-          <span>{{ row.id }}</span>
+          <span>{{ row.resourceId }}</span>
         </template>
       </el-table-column>
       <el-table-column label="书名" prop="resourceName" min-width="150px" sortable="custom" :class-name="getSortClass('resourceName')">
@@ -137,6 +137,7 @@
             </el-form-item>
             <el-form-item label="所属类别" prop="category">
                <el-cascader
+                 clearable
                   v-model="temp.category"
                   :options="categoryOptions"
                   @change="handleChange">
@@ -203,45 +204,6 @@ const calendarTypeKeyValue = calendarTypeOptions.reduce((acc, cur) => {
   return acc
 }, {})
 
-const fakeData = [
-  {
-    id: 1,
-    resourceName: '《哈利·波特与阿兹卡班的囚徒》',
-    storageAll: 10,
-    storageAvail: 7,
-    author: 'J.K.罗琳',
-    language: '中文',
-    country: '英',
-    ISBN: '7-02-003345-8',
-    translator: '郑须弥',
-    publisher: '人民文学出版社',
-    publishDate: '2000',
-    category: ['儿童文学', '长篇小说', '英国', '现代'],
-    zhongtu: 'I561.84',
-    ketu: '47.1152',
-    image: '',
-    access: 'IMPORTANT'
-  },
-  {
-    id: 2,
-    resourceName: '《哈利·波特与凤凰社》',
-    storageAll: 10,
-    storageAvail: 5,
-    author: 'J.K.罗琳',
-    language: '中文',
-    country: '英',
-    ISBN: '7-02-003345-9',
-    translator: '郑须弥',
-    publisher: '人民文学出版社',
-    publishDate: '2001',
-    category: ['儿童文学', '长篇小说', '英国', '现代'],
-    zhongtu: 'I561.84',
-    ketu: '47.1152',
-    image: '',
-    access: 'IMPORTANT'
-  }
-]
-
 export default {
   name: 'BookManage',
   components: { Pagination },
@@ -265,11 +227,11 @@ export default {
         limit: 20,
         resourceName: undefined,
         author: undefined,
-        sort: '+id'
+        sort: '+resourceId'
       },
       calendarTypeOptions,
       temp: {
-        id: -1,
+        resourceId: undefined,
         resourceName: '',
         storageAll: 0,
         storageAvail: 0,
@@ -277,14 +239,14 @@ export default {
         language: '',
         country: '',
         ISBN: '',
-        translator: '',
-        publisher: '',
-        publishDate: '',
-        category: [],
-        zhongtu: '',
-        ketu: '',
-        image: '',
-        access: ''
+        translator: undefined,
+        publisher: undefined,
+        publishDate: undefined,
+        category: undefined,
+        zhongtu: undefined,
+        ketu: undefined,
+        image: undefined,
+        access: undefined
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -312,21 +274,15 @@ export default {
   },
   methods: {
     getList() {
-      // this.listLoading = true
-      // this.list = fakeData
-      // this.total = fakeData.length
-      // this.listLoading = false
       fetchList(this.listQuery).then(response => {
-        console.log(response)
-        this.list = response.data.resourceList
+        // console.log(response)
+        this.list = response.data.list
         this.total = response.data.totalNum
         this.listQuery.page = response.data.pageNum
         this.listQuery.limit = response.data.pageSize
 
         // Just to simulate the time of the request
-        setTimeout(() => {
-          this.listLoading = false
-        }, 1.5 * 1000)
+        this.listLoading = false
       })
     },
     handleChange(value){
@@ -340,13 +296,6 @@ export default {
       this.listQuery.page = 1
       this.getList()
     },
-    handleModifyStatus(row, status) {
-      this.$message({
-        message: '操作Success',
-        type: 'success'
-      })
-      row.status = status
-    },
     sortChange(data) {
       const { prop, order } = data
       this.sortNumber(prop, order)
@@ -357,11 +306,11 @@ export default {
       } else {
         this.listQuery.sort = '-' + field
       }
-      this.getList() // TODO handleFilter()
+      this.handleFilter()
     },
     resetTemp() {
       this.temp = {
-        id: undefined,
+        resourceId: undefined,
         resourceName: '',
         storageAll: 0,
         storageAvail: 0,
@@ -369,14 +318,14 @@ export default {
         language: '',
         country: '',
         ISBN: '',
-        translator: '',
-        publisher: '',
-        publishDate: '',
-        category: [],
-        zhongtu: '',
-        ketu: '',
-        image: '',
-        access: ''
+        translator: undefined,
+        publisher: undefined,
+        publishDate: undefined,
+        category: undefined,
+        zhongtu: undefined,
+        ketu: undefined,
+        image: undefined,
+        access: undefined
       }
     },
     handleCreate() {
@@ -390,15 +339,23 @@ export default {
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          createArticle(this.temp).then(() => {
-            this.list.unshift(this.temp) // TODO 获取数据而不是临时添加
-            this.dialogFormVisible = false
-            this.$notify({
-              title: 'Success',
-              message: 'Created Successfully',
-              type: 'success',
-              duration: 2000
-            })
+          createArticle(this.temp).then((res) => {
+            if(res.status === 200) {
+              this.dialogFormVisible = false
+              this.$notify({
+                title: '成功',
+                message: '新建图书成功',
+                type: 'success',
+                duration: 2000
+              })
+            } else {
+              this.$notify({
+                message: '失败',
+                type: 'error'
+              })
+            }
+          }).catch(e => {
+            console.log(e)
           })
         }
       })
@@ -414,18 +371,23 @@ export default {
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          const tempData = Object.assign({}, this.temp)
-          tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
-          updateArticle(tempData).then(() => {
-            const index = this.list.findIndex(v => v.id === this.temp.id)
-            this.list.splice(index, 1, this.temp)
-            this.dialogFormVisible = false
-            this.$notify({
-              title: 'Success',
-              message: 'Update Successfully',
-              type: 'success',
-              duration: 2000
-            })
+          updateArticle(this.temp).then((res) => {
+            if(res.status === 200) {
+              this.dialogFormVisible = false
+              this.$notify({
+                title: '成功',
+                message: '更新图书成功',
+                type: 'success',
+                duration: 2000
+              })
+            } else {
+              this.$notify({
+                message: '失败',
+                type: 'error'
+              })
+            }
+          }).catch(e => {
+            console.log(e)
           })
         }
       })
@@ -455,26 +417,6 @@ export default {
         });
       });
     },
-    handleFetchPv(pv) {
-      fetchPv(pv).then(response => {
-        this.pvData = response.data.pvData
-        this.dialogPvVisible = true
-      })
-    },
-    // handleDownload() {
-    //   this.downloadLoading = true
-    //   import('@/vendor/Export2Excel').then(excel => {
-    //     const tHeader = ['timestamp', 'title', 'type', 'importance', 'status']
-    //     const filterVal = ['timestamp', 'title', 'type', 'importance', 'status']
-    //     const data = this.formatJson(filterVal)
-    //     excel.export_json_to_excel({
-    //       header: tHeader,
-    //       data,
-    //       filename: 'table-list'
-    //     })
-    //     this.downloadLoading = false
-    //   })
-    // },
     formatJson(filterVal) {
       return this.list.map(v => filterVal.map(j => {
         if (j === 'timestamp') {

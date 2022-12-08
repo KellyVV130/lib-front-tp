@@ -35,7 +35,7 @@ export default {
     pageSizes: {
       type: Array,
       default() {
-        return [10, 20, 30, 50]
+        return [2, 10, 20, 30, 50]
       }
     },
     layout: {
@@ -82,6 +82,7 @@ export default {
     },
     handleCurrentChange(val) {
       this.$emit('pagination', { page: val, limit: this.pageSize })
+      console.log(this.page, this.limit, 'page change')
       if (this.autoScroll) {
         scrollTo(0, 800)
       }

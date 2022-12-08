@@ -5,11 +5,10 @@ import router, { resetRouter } from '@/router'
 const getDefaultState = () => {
   return {
     token: getToken(),
-    id: -1,
     name: '',
     avatar: '',
     roles: [],
-    card: {},
+    cardId: -1,
   }
 }
 
@@ -31,23 +30,20 @@ const mutations = {
   SET_ROLES: (state, roles) => {
     state.roles = roles
   },
-  SET_ID: (state, id) => {
-    state.id = id
-  },
-  SET_CARD: (state, card) => {
-    state.card = JSON.parse(JSON.stringify(card))
+  SET_CARD: (state, cardId) => {
+    state.cardId = cardId
   }
 }
 
 const actions = {
   // user login
   login({ commit }, userInfo) {
-    const { username, password } = userInfo
-    return new Promise((resolve, reject) => { // TODO 等登录好了要改成name
-      login({ username: username.trim(), password: password }).then(response => {
+    const { name, password } = userInfo
+    return new Promise((resolve, reject) => {
+      login({ name: name.trim(), password: password }).then(response => {
         const { data } = response
-        localStorage.setItem('token', data.token)
         commit('SET_TOKEN', data.token)
+        localStorage.setItem('id', data.userId)
         setToken(data.token)
         resolve()
       }).catch(error => {
@@ -59,26 +55,25 @@ const actions = {
   // get user info
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
-      getInfo(state.token).then(response => { // TODO id
+      getInfo(localStorage.getItem('id')).then(response => {
         const { data } = response
 
-        if (!data) { // TODO 需要重新登录
-          return reject('Verification failed, please Login again.')
+        if (response.status!==200) { // TODO 需要重新登录
+          return reject('认证失败，请重新登录')
         }
 
-        // const { id, name, card, avatar, roles } = data
-        const { roles, name, avatar } = data
+        const { name, cardId, avatar, role } = data
+        // const { roles, name, avatar } = data
 
         // roles must be a non-empty array
-        if (!roles || roles.length <= 0) { // TODO 判断role是否有效，是什么role
-          reject('getInfo: roles must be a non-null array!')
+        if (!role || role.length <= 0) {
+          reject('角色应为super, admin 或 user')
         }
 
-        commit('SET_ROLES', roles)
-        // commit('SET_ID', id)
+        commit('SET_ROLES', role)
         commit('SET_NAME', name)
         commit('SET_AVATAR', avatar)
-        // commit('SET_CARD', card)
+        commit('SET_CARD', cardId)
         resolve(data)
       }).catch(error => {
         reject(error)
@@ -91,8 +86,8 @@ const actions = {
     return new Promise((resolve, reject) => {
       logout(state.token).then(() => {
         removeToken() // must remove  token  first
-        localStorage.removeItem('token')
         resetRouter()
+        localStorage.removeItem('id')
         commit('RESET_STATE')
         resolve()
       }).catch(error => {

@@ -85,13 +85,13 @@ export const constantRoutes = [
         path: 'preserve',
         name: 'Preserve',
         component: () => import('@/views/borrow/index'),
-        meta: { title: '借阅记录', icon: 'table', role: ['user', 'admin', 'super'] }
+        meta: { title: '借阅记录', icon: 'table', roles: ['user', 'admin', 'super'] }
       },*/
       {
         path: 'postpone',
         name: 'Postpone',
         component: () => import('@/views/borrow/Postpone'),
-        meta: { title: '借阅延期', icon: 'el-icon-user-solid', role: ['user', 'admin', 'super'] }
+        meta: { title: '借阅延期', icon: 'el-icon-user-solid', roles: ['user', 'admin', 'super'] }
       }
     ]
   },
@@ -104,7 +104,7 @@ export const constantRoutes = [
         path: 'index',
         name: 'History',
         component: () => import('@/views/borrow/index'),
-        meta: { title: '借阅记录', icon: 'table', role: ['user', 'admin', 'super'] }
+        meta: { title: '借阅记录', icon: 'table', roles: ['user', 'admin', 'super'] }
       }
     ]
   }
@@ -119,7 +119,7 @@ export const asyncRoutes = [
       path: 'book-manage',
       name: 'BookManage',
       component: () => import('@/views/book-m/index'),
-      meta: { title: '图书管理', icon: 'el-icon-s-management', role: ['admin', 'super'] }
+      meta: { title: '图书管理', icon: 'el-icon-s-management', roles: ['admin', 'super'] }
     }]
   },
 
@@ -127,14 +127,14 @@ export const asyncRoutes = [
     path: '/borrow-manage',
     component: Layout,
     redirect: '/borrow-manage/table',
-    name: 'BookManage',
+    name: 'BorrowManage',
     meta: { title: '借阅记录管理', icon: 'table' },
     children: [
       {
         path: 'table',
         name: 'Table',
         component: () => import('@/views/borrow-m/index'),
-        meta: { title: '借阅记录管理', icon: 'table', role: ['admin', 'super'] }
+        meta: { title: '借阅记录管理', icon: 'table', roles: ['admin', 'super'] }
       }
     ]
   },
@@ -147,7 +147,7 @@ export const asyncRoutes = [
         path: 'index',
         name: 'UserManage',
         component: () => import('@/views/user-m/index'),
-        meta: { title: '用户管理', icon: 'el-icon-user-solid', role: ['admin', 'super'] }
+        meta: { title: '用户管理', icon: 'el-icon-user-solid', roles: ['admin', 'super'] }
       }
     ]
   },
