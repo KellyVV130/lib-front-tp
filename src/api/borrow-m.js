@@ -13,38 +13,23 @@ export function fetchList(query) {
   }
   return request({
     url: '/record/get',
-    method: 'get',
-    params: params
+    method: 'post',
+    params
   })
 }
 
-export function fetchArticle(id) {
+export function createRecord(data) {
   return request({
-    url: '/vue-element-admin/article/detail',
-    method: 'get',
-    params: { id }
-  })
-}
-
-export function fetchPv(pv) {
-  return request({
-    url: '/vue-element-admin/article/pv',
-    method: 'get',
-    params: { pv }
-  })
-}
-
-export function createArticle(data) {
-  return request({
-    url: '/vue-element-admin/article/create',
+    url: '/user/borrow',
     method: 'post',
     data
   })
 }
 
-export function updateArticle(data) {
+export function updateRecord(data) {
+  // TODO 参数
   return request({
-    url: '/vue-element-admin/article/update',
+    url: '/user/postpone',
     method: 'post',
     data
   })

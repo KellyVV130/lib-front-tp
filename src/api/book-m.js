@@ -11,31 +11,24 @@ export function fetchList(query) {
     order: query.sort[0]==='+'?'asc':'desc'
   }
   return request({
-    url: '/vue-element-admin/article/list',
-    method: 'get',
-    params: params
+    url: '/resource/public/list',
+    method: 'post',
+    params
   })
 }
 
 export function fetchArticle(id) {
+  const data = { resourceId: id }
   return request({
-    url: '/vue-element-admin/article/detail',
-    method: 'get',
-    params: { id }
-  })
-}
-
-export function fetchPv(pv) {
-  return request({
-    url: '/vue-element-admin/article/pv',
-    method: 'get',
-    params: { pv }
+    url: '/resource/public',
+    method: 'post',
+    data
   })
 }
 
 export function createArticle(data) {
   return request({
-    url: '/vue-element-admin/article/create',
+    url: '/resource/add',
     method: 'post',
     data
   })
@@ -48,3 +41,13 @@ export function updateArticle(data) {
     data
   })
 }
+
+export function deleteArticle(id) {
+  const data = { resourceId: id }
+  return request({
+    url: '/resource/delete',
+    method: 'post',
+    data
+  })
+}
+

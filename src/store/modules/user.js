@@ -46,6 +46,7 @@ const actions = {
     return new Promise((resolve, reject) => { // TODO 等登录好了要改成name
       login({ username: username.trim(), password: password }).then(response => {
         const { data } = response
+        localStorage.setItem('token', data.token)
         commit('SET_TOKEN', data.token)
         setToken(data.token)
         resolve()
@@ -90,6 +91,7 @@ const actions = {
     return new Promise((resolve, reject) => {
       logout(state.token).then(() => {
         removeToken() // must remove  token  first
+        localStorage.removeItem('token')
         resetRouter()
         commit('RESET_STATE')
         resolve()

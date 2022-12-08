@@ -2,7 +2,7 @@
   <div class="dashboard-container">
     <div class="filter-container">
           <el-input
-            v-model="listQuery.book_name"
+            v-model="listQuery.resourceName"
             placeholder="书名"
             style="width: 200px;"
             class="filter-item"
@@ -38,9 +38,9 @@
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="书名" prop="name" min-width="150px" sortable="custom" :class-name="getSortClass('name')">
+      <el-table-column label="书名" prop="resourceName" min-width="150px" sortable="custom" :class-name="getSortClass('resourceName')">
         <template slot-scope="{row}">
-          <span class="link-type" @click="handleUpdate(row)">{{ row.name }}</span>
+          <span class="link-type" @click="handleUpdate(row)">{{ row.resourceName }}</span>
 <!--          <el-tag>{{ row.type | typeFilter }}</el-tag>-->
         </template>
       </el-table-column>
@@ -51,12 +51,12 @@
       </el-table-column>
       <el-table-column label="馆藏数目" prop="storageAll" sortable="custom" align="center" :class-name="getSortClass('storageAll')">
         <template slot-scope="{row}">
-          <span>{{ row.storage_all }}</span>
+          <span>{{ row.storageAll }}</span>
         </template>
       </el-table-column>
       <el-table-column label="可借数目" prop="storageAvail" sortable="custom" align="center" :class-name="getSortClass('storageAvail')">
         <template slot-scope="{row}">
-          <span>{{ row.storage_avail }}</span>
+          <span>{{ row.storageAvail }}</span>
         </template>
       </el-table-column>
       <el-table-column label="语言" width="110px" align="center">
@@ -92,8 +92,8 @@
       <el-form ref="dataForm" :rules="rules" :model="temp" label-width="90px">
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="图书全称" prop="name">
-              <el-input v-model="temp.name" placeholder="例：《三国演义》" />
+            <el-form-item label="图书全称" prop="resourceName">
+              <el-input v-model="temp.resourceName" placeholder="例：《三国演义》" />
             </el-form-item>
             <el-form-item label="作者名" prop="author">
               <el-input v-model="temp.author" placeholder="请输入全名" />
@@ -114,20 +114,20 @@
                 <el-option label="外语" value="外语" />
               </el-select>
             </el-form-item>
-            <el-form-item label="馆藏数目" prop="storage_all">
-              <el-input v-model="temp.storage_all" type="number" placeholder="请输入数字" />
+            <el-form-item label="馆藏数目" prop="storageAll">
+              <el-input v-model="temp.storageAll" type="number" placeholder="请输入数字" />
             </el-form-item>
-            <el-form-item label="可借数目" prop="storage_avail">
-              <el-input v-model="temp.storage_avail" type="number" placeholder="请输入数字" />
+            <el-form-item label="可借数目" prop="storageAvail">
+              <el-input v-model="temp.storageAvail" type="number" placeholder="请输入数字" />
             </el-form-item>
             <el-form-item label="ISBN" prop="ISBN">
               <el-input v-model="temp.ISBN" placeholder="请输入" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="出版年份" prop="publish_date">
+            <el-form-item label="出版年份" prop="publishDate">
               <el-date-picker
-                v-model="temp.publish_date"
+                v-model="temp.publishDate"
                 type="year"
                 placeholder="选择年">
               </el-date-picker>
@@ -183,7 +183,7 @@
 </template>
 
 <script>
-import { fetchList, fetchPv, createArticle, updateArticle } from '@/api/book-m'
+import { fetchList, createArticle, updateArticle } from '@/api/book-m'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import {country} from '@/utils/country'
@@ -206,16 +206,16 @@ const calendarTypeKeyValue = calendarTypeOptions.reduce((acc, cur) => {
 const fakeData = [
   {
     id: 1,
-    name: '《哈利·波特与阿兹卡班的囚徒》',
-    storage_all: 10,
-    storage_avail: 7,
+    resourceName: '《哈利·波特与阿兹卡班的囚徒》',
+    storageAll: 10,
+    storageAvail: 7,
     author: 'J.K.罗琳',
     language: '中文',
     country: '英',
     ISBN: '7-02-003345-8',
     translator: '郑须弥',
     publisher: '人民文学出版社',
-    publish_date: '2000',
+    publishDate: '2000',
     category: ['儿童文学', '长篇小说', '英国', '现代'],
     zhongtu: 'I561.84',
     ketu: '47.1152',
@@ -224,16 +224,16 @@ const fakeData = [
   },
   {
     id: 2,
-    name: '《哈利·波特与凤凰社》',
-    storage_all: 10,
-    storage_avail: 5,
+    resourceName: '《哈利·波特与凤凰社》',
+    storageAll: 10,
+    storageAvail: 5,
     author: 'J.K.罗琳',
     language: '中文',
     country: '英',
     ISBN: '7-02-003345-9',
     translator: '郑须弥',
     publisher: '人民文学出版社',
-    publish_date: '2001',
+    publishDate: '2001',
     category: ['儿童文学', '长篇小说', '英国', '现代'],
     zhongtu: 'I561.84',
     ketu: '47.1152',
@@ -263,23 +263,23 @@ export default {
       listQuery: {
         page: 1,
         limit: 20,
-        book_name: undefined,
+        resourceName: undefined,
         author: undefined,
         sort: '+id'
       },
       calendarTypeOptions,
       temp: {
         id: -1,
-        name: '',
-        storage_all: 0,
-        storage_avail: 0,
+        resourceName: '',
+        storageAll: 0,
+        storageAvail: 0,
         author: '',
         language: '',
         country: '',
         ISBN: '',
         translator: '',
         publisher: '',
-        publish_date: '',
+        publishDate: '',
         category: [],
         zhongtu: '',
         ketu: '',
@@ -296,11 +296,11 @@ export default {
       dialogPvVisible: false,
       pvData: [],
       rules: {
-        name: [{ required: true, message: '图书名称必填', trigger: 'change' }],
+        resourceName: [{ required: true, message: '图书名称必填', trigger: 'change' }],
         author: [{ required: true, message: '作者必填', trigger: 'change' }],
-        storage_all: [{ required: true, message: '馆藏书目必填', trigger: 'blur' },
+        storageAll: [{ required: true, message: '馆藏书目必填', trigger: 'blur' },
           {validator: checkStorage, trigger: 'blur'}],
-        storage_avail: [{ required: true, message: '可借数目必填', trigger: 'blur' },
+        storageAvail: [{ required: true, message: '可借数目必填', trigger: 'blur' },
           {validator: checkStorage, trigger: 'blur'}]
       },
       downloadLoading: false,
@@ -312,19 +312,22 @@ export default {
   },
   methods: {
     getList() {
-      this.listLoading = true
-      this.list = fakeData
-      this.total = fakeData.length
-      this.listLoading = false
-      // fetchList(this.listQuery).then(response => {
-      //   this.list = response.data.items
-      //   this.total = response.data.total
-      //
-      //   // Just to simulate the time of the request
-      //   setTimeout(() => {
-      //     this.listLoading = false
-      //   }, 1.5 * 1000)
-      // })
+      // this.listLoading = true
+      // this.list = fakeData
+      // this.total = fakeData.length
+      // this.listLoading = false
+      fetchList(this.listQuery).then(response => {
+        console.log(response)
+        this.list = response.data.resourceList
+        this.total = response.data.totalNum
+        this.listQuery.page = response.data.pageNum
+        this.listQuery.limit = response.data.pageSize
+
+        // Just to simulate the time of the request
+        setTimeout(() => {
+          this.listLoading = false
+        }, 1.5 * 1000)
+      })
     },
     handleChange(value){
       console.log(value)
@@ -359,16 +362,16 @@ export default {
     resetTemp() {
       this.temp = {
         id: undefined,
-        name: '',
-        storage_all: 0,
-        storage_avail: 0,
+        resourceName: '',
+        storageAll: 0,
+        storageAvail: 0,
         author: '',
         language: '',
         country: '',
         ISBN: '',
         translator: '',
         publisher: '',
-        publish_date: '',
+        publishDate: '',
         category: [],
         zhongtu: '',
         ketu: '',
