@@ -8,70 +8,135 @@
       border
       fit
       highlight-current-row
+      style="width: 100%; margin-top: 20px;"
     >
-      <el-table-column label="用户ID" width="142" align="center">
+      <el-table-column label="用户ID" align="center">
         <template slot-scope="scope">
 <!--          {{ scope.$index }}-->
-          {{ scope.row.id }}
+          {{ scope.row.userId }}
         </template>
       </el-table-column>
-      <el-table-column label="用户名" width="180" align="center">
+      <el-table-column label="用户名" align="center">
         <template slot-scope="scope">
-          {{ scope.row.username }}
+          {{ scope.row.name }}
         </template>
       </el-table-column>
-      <el-table-column label="密码" width="180" align="center">
+      <el-table-column label="密码" align="center">
         <template slot-scope="scope">
           {{ scope.row.password }}
         </template>
       </el-table-column>
-      <el-table-column label="创建时间" width="200" align="center">
+      <el-table-column label="创建时间" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.createTime }}</span>
+          <span>{{ scope.row.createdTime }}</span>
         </template>
       </el-table-column>
-      <el-table-column class-name="status-col" label="角色" width="110" align="center">
+      <el-table-column label="借阅卡ID" width="120" align="center">
         <template slot-scope="scope">
-          <el-tag :type="scope.row.role | statusFilter">{{ scope.row.role }}</el-tag>
+          <span>{{ scope.row.cardId }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="头像" width="120" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.avatar }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column class-name="status-col" label="角色" width="120" align="center">
+        <template slot-scope="scope">
+          <el-tag :type="scope.row.role | roleFilter">{{ roles.find(r => r.value === scope.row.role).label }}</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column class-name="status-col" label="借阅权限" width="120" align="center">
+        <template slot-scope="scope">
+          <el-tag :type="scope.row.access | accessFilter">{{ scope.row.access }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="操作" width="200" align="center">
         <template slot-scope="scope">
           <el-button type="primary" size="mini" @click="openDialog(scope.row)">编辑</el-button>
-          <el-button type="danger" size="mini" @click="handleDelete(scope.row.id)">删除</el-button>
+          <el-button type="danger" size="mini" @click="handleDelete(scope.row.userId)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
     <pagination v-show="pageInfo.total>0" :total="pageInfo.total" :page.sync="pageInfo.currentPage" :limit.sync="pageInfo.pageSize" @pagination="changePage"></pagination>
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogVisible" width="60%">
+    <el-dialog title="修改" :visible.sync="dialogUpdateVisible" width="64%">
       <el-form ref="dataForm" :model="userInfo" label-position="left" label-width="90px">
         <el-row :gutter="20">
           <el-col :span="12" :offset="6">
-            <el-form-item label="用户ID" prop="id">
-              <el-input v-model="userInfo.id" placeholder="Please input" />
+            <el-form-item label="用户ID" prop="userId" >
+              <el-input v-model="userInfo.userId" placeholder="Please input" disabled/>
             </el-form-item>
-            <el-form-item label="用户名" prop="username">
-              <el-input v-model="userInfo.username" placeholder="Please input" />
+            <el-form-item label="用户名" prop="name">
+              <el-input v-model="userInfo.name" placeholder="Please input" />
             </el-form-item>
             <el-form-item label="密码" prop="password">
               <el-input v-model="userInfo.password" placeholder="Please input" />
             </el-form-item>
-            <el-form-item label="创建时间" prop="createTime">
-              <el-input v-model="userInfo.createTime" placeholder="Please input" />
+            <el-form-item label="创建时间" prop="createdTime">
+              <el-input v-model="userInfo.createdTime" placeholder="Please input" />
+            </el-form-item>
+            <el-form-item label="借阅卡ID" prop="cardId">
+              <el-input v-model="userInfo.cardId" placeholder="Please input" />
+            </el-form-item>
+            <el-form-item label="头像" prop="avatar">
+              <el-input v-model="userInfo.avatar" placeholder="Please input" />
             </el-form-item>
             <el-form-item label="角色" prop="role">
               <el-radio v-for="role in roles" :key="role.value" v-model="userInfo.role" :label="role.value">
                 {{ role.label }}
               </el-radio>
             </el-form-item>
+            <el-form-item label="借阅权限" prop="access">
+              <el-radio v-for="access in accesses" :key="access" v-model="userInfo.access" :label="access">
+                {{ access }}
+              </el-radio>
+            </el-form-item>
           </el-col>
         </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">
+        <el-button @click="dialogUpdateVisible = false">
           取消
         </el-button>
-        <el-button type="primary" @click="dialogStatus==='create'?handleCreate:handleUpdate">
+        <el-button type="primary" @click="handleUpdate">
+          提交
+        </el-button>
+      </div>
+    </el-dialog>
+    <el-dialog title="创建" :visible.sync="dialogCreateVisible" width="64%">
+      <el-form ref="dataForm" :model="userInfo" label-position="left" label-width="90px">
+        <el-row :gutter="20">
+          <el-col :span="12" :offset="6">
+            <el-form-item label="用户名" prop="name">
+              <el-input v-model="userInfo.name" placeholder="Please input" />
+            </el-form-item>
+            <el-form-item label="密码" prop="password">
+              <el-input v-model="userInfo.password" placeholder="Please input" />
+            </el-form-item>
+<!--            <el-form-item label="借阅卡ID" prop="cardId">-->
+<!--              <el-input v-model="userInfo.cardId" placeholder="Please input" />-->
+<!--            </el-form-item>-->
+            <el-form-item label="头像" prop="avatar">
+              <el-input v-model="userInfo.avatar" placeholder="Please input" />
+            </el-form-item>
+            <el-form-item label="角色" prop="role">
+              <el-radio v-for="role in roles" :key="role.value" v-model="userInfo.role" :label="role.value">
+                {{ role.label }}
+              </el-radio>
+            </el-form-item>
+<!--            <el-form-item label="借阅权限" prop="access">-->
+<!--              <el-radio v-for="access in accesses" :key="access" v-model="userInfo.access" :label="access">-->
+<!--                {{ access }}-->
+<!--              </el-radio>-->
+<!--            </el-form-item>-->
+          </el-col>
+        </el-row>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogCreateVisible = false">
+          取消
+        </el-button>
+        <el-button type="primary" @click="handleCreate">
           提交
         </el-button>
       </div>
@@ -87,13 +152,23 @@ import Pagination from '@/components/Pagination'
 export default {
   components: { Pagination },
   filters: {
-    statusFilter(role) {
-      const statusMap = {
-        staff: 'danger',
+    roleFilter(role) {
+      const roleMap = {
+        super: 'danger',
+        admin: 'success',
         user: 'gray'
         // deleted: 'danger'
       }
-      return statusMap[role]
+      return roleMap[role]
+    },
+    accessFilter(access) {
+      const accessMap = {
+        1: 'danger',
+        2: 'success',
+        3: 'gray',
+        4: 'info'
+      }
+      return accessMap[access]
     }
   },
   data() {
@@ -102,7 +177,7 @@ export default {
       pageInfo: {
         pageSize: 10,
         currentPage: 1,
-        total: 100
+        total: 0
       },
       listLoading: true,
       checkedRole: [],
@@ -120,23 +195,28 @@ export default {
           label: '超级管理员'
         }
       ],
+      accesses: [1, 2, 3, 4],
       textMap: {
         'edit': '编辑',
         'create': '添加'
       },
-      dialogVisible: false,
-      dialogStatus: 'create',
+      dialogUpdateVisible: false,
+      dialogCreateVisible: false,
       userInfo: {
-        id: '',
-        username: '',
+        userId: '',
+        name: '',
         password: '',
         createTime: '',
+        cardId: '',
+        access: '',
+        avatar: '',
         role: ''
       }
     }
   },
   created() {
-    this.fetchData()
+    // this.fetchData()
+    this.getUserList()
   },
   methods: {
     fetchData() {
@@ -151,7 +231,9 @@ export default {
       this.listLoading = true
       const params = {
         pageSize: this.pageInfo.pageSize,
-        currentPage: this.pageInfo.currentPage
+        pageNum: this.pageInfo.currentPage,
+        sort: 'userId',
+        order: 'asc'
       }
       getUsers(params).then(response => {
         this.list = response.data.userList
@@ -160,52 +242,57 @@ export default {
       })
     },
     openDialog(input) {
-      if (input === null) {
-        this.dialogVisible = true
-        this.dialogStatus = 'create'
+      if (input == null) {
+        this.dialogCreateVisible = true
         this.userInfo = {
-          id: '',
           username: '',
           password: '',
           createTime: '',
           role: ''
         }
       } else {
-        this.dialogVisible = true
-        this.dialogStatus = 'edit'
+        this.dialogUpdateVisible = true
         this.userInfo = input
       }
     },
+    // submitForm() {
+    //   if (this.dialogStatus === 'create') {
+    //     this.handleCreate()
+    //   } else {
+    //     this.handleUpdate()
+    //   }
+    // },
     // 编辑某个用户信息
     handleUpdate() {
       updateUser(this.userInfo).then(response => {
-        if (response.data.code === '200') {
-          this.$message.success('用户信息修改成功！')
-        } else {
-          this.$message.error('用户信息修改失败。')
-        }
+        this.$message.success('用户信息修改成功！')
+        this.dialogUpdateVisible = false
       })
     },
     // 新建用户
     handleCreate() {
-      createUser(this.userInfo).then(response => {
-        if (response.data.code === '200') {
-          this.$message.success('添加用户成功！')
-        } else {
-          this.$message.error(response.data.code + ': ' + response.data.message)
-        }
+      const data = {
+        name: this.userInfo.name,
+        password: this.userInfo.password,
+        avatar: this.userInfo.password,
+        role: this.userInfo.role
+      }
+      createUser(data).then(response => {
+        this.$message.success('添加用户成功！')
+        this.dialogCreateVisible = false
       })
     },
     // 删除某个用户
     handleDelete(id) {
       console.log(id)
       deleteUser({
-        id: id
+        userId: id
       }).then(response => {
-        if (response.data.code === '200') {
+        if (response.data.successed === true) {
           this.$message.success('删除用户成功')
+          this.getUserList()
         } else {
-          this.$message.error(response.data.code + ': ' + response.data.message)
+          this.$message.error(response.data.reason)
         }
       })
     },

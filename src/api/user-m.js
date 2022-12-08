@@ -1,48 +1,48 @@
 import request from '@/utils/request'
 
 // 增
-export function createUser(params) {
+export function createUser(data) {
   return request({
-    url: '/api/user/createUser',
+    url: 'user/create',
     method: 'post',
-    params
+    data
   })
 }
 
 // 删
-export function deleteUser(params) {
+export function deleteUser(data) {
   return request({
-    url: '/api/user/deleteUserById',
-    method: 'get',
-    params
+    url: 'user/delete',
+    method: 'post',
+    data
   })
 }
 
 // 改
-export function updateUser(params) {
+export function updateUser(data) {
   return request({
-    url: '/api/user/updateUser',
+    url: 'user/update',
     method: 'post',
-    params
+    data
   })
 }
 
 // 查
 // 查询第几页用户列表
-export function getUsers(params) {
+export function getUsers(data) {
   return request({
     url: '/user/all',
-    method: 'get',
-    params
+    method: 'post',
+    data
   })
 }
 
 // 查询某用户信息
-export function getUserInfo(params) {
+export function getUserInfo(data) {
   return request({
     urls: '/user/get',
-    method: 'get',
-    params
+    method: 'post',
+    data
   })
 }
 
