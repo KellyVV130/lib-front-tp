@@ -37,7 +37,7 @@ export function createArticle(data) {
 
 export function updateArticle(data) {
   return request({
-    url: '/vue-element-admin/article/update',
+    url: '/resource/update',
     method: 'post',
     data
   })

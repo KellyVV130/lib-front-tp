@@ -342,14 +342,13 @@ export default {
           createArticle(this.temp).then((res) => {
             if(res.status === 200) {
               this.dialogFormVisible = false
-              this.$notify({
-                title: '成功',
-                message: '新建图书成功',
-                type: 'success',
-                duration: 2000
+              this.$message({
+                message: '创建成功',
+                type: 'success'
               })
+              this.getList()
             } else {
-              this.$notify({
+              this.$message({
                 message: '失败',
                 type: 'error'
               })
@@ -374,14 +373,13 @@ export default {
           updateArticle(this.temp).then((res) => {
             if(res.status === 200) {
               this.dialogFormVisible = false
-              this.$notify({
-                title: '成功',
-                message: '更新图书成功',
-                type: 'success',
-                duration: 2000
+              this.$message({
+                message: '登出成功',
+                type: 'success'
               })
+              this.getList()
             } else {
-              this.$notify({
+              this.$message({
                 message: '失败',
                 type: 'error'
               })

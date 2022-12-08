@@ -42,6 +42,7 @@ const actions = {
     return new Promise((resolve, reject) => {
       login({ name: name.trim(), password: password }).then(response => {
         const { data } = response
+        console.log('user login', data)
         commit('SET_TOKEN', data.token)
         localStorage.setItem('id', data.userId)
         setToken(data.token)
@@ -84,12 +85,12 @@ const actions = {
   // user logout
   logout({ commit, state }) {
     return new Promise((resolve, reject) => {
-      logout(state.token).then(() => {
+      logout(localStorage.getItem('id')).then((res) => {
         removeToken() // must remove  token  first
         resetRouter()
         localStorage.removeItem('id')
         commit('RESET_STATE')
-        resolve()
+        resolve(res)
       }).catch(error => {
         reject(error)
       })

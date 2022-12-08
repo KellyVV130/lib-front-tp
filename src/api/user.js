@@ -17,10 +17,12 @@ export function getInfo(userId) {
   })
 }
 
-export function logout() {
+export function logout(id) {
+  const data = { userId: id}
   return request({
-    url: '/vue-admin-template/user/logout',
-    method: 'post'
+    url: '/auth/logout',
+    method: 'post',
+    data
   })
 }
 

@@ -116,7 +116,7 @@ export const asyncRoutes = [
     component: Layout,
     redirect: '/book-manage',
     children: [{
-      path: 'book-manage',
+      path: 'index',
       name: 'BookManage',
       component: () => import('@/views/book-m/index'),
       meta: { title: '图书管理', icon: 'el-icon-s-management', roles: ['admin', 'super'] }
@@ -127,12 +127,10 @@ export const asyncRoutes = [
     path: '/borrow-manage',
     component: Layout,
     redirect: '/borrow-manage/table',
-    name: 'BorrowManage',
-    meta: { title: '借阅记录管理', icon: 'table' },
     children: [
       {
-        path: 'table',
-        name: 'Table',
+        path: 'index',
+        name: 'BorrowManage',
         component: () => import('@/views/borrow-m/index'),
         meta: { title: '借阅记录管理', icon: 'table', roles: ['admin', 'super'] }
       }

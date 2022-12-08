@@ -46,7 +46,14 @@ export default {
       this.$store.dispatch('app/toggleSideBar')
     },
     async logout() {
-      await this.$store.dispatch('user/logout')
+      console.log('tuichu')
+      let res = await this.$store.dispatch('user/logout')
+      if(res.status === 200) {
+        this.$message({
+          message: '登出成功',
+          type: 'success'
+        })
+      }
       this.$router.push(`/login?redirect=${this.$route.fullPath}`)
     }
   }
