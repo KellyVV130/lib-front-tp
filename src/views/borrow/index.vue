@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-card class="box-card-cal">
-    <el-calendar v-model="value" style="width:380px; height: 500px;" >
+    <el-calendar v-model="value" style="width:520px; height: 500px;" >
     </el-calendar>
     </el-card>
     <el-card class="box-card">
@@ -21,11 +21,11 @@
           label="书名"
           width="230">
         </el-table-column>
-        <el-table-column
-          prop="author"
-          label="作者"
-          width="175">
-        </el-table-column>
+<!--        <el-table-column-->
+<!--          prop="author"-->
+<!--          label="作者"-->
+<!--          width="175">-->
+<!--        </el-table-column>-->
         <el-table-column
           prop="startDate"
           label="借阅日期"
@@ -39,10 +39,11 @@
         <el-table-column
           prop="status"
           label="状态"
-          width="50">
+          width="100">
           <template slot-scope="scope">
-            <i v-if="scope.row.status === 1 " class="el-icon-circle-check"></i>
-            <i v-if="scope.row.status === 0 " class="el-icon-error"></i>
+            <el-button size="mini" v-if="scope.row.status === 1 " type="success" plain>已还</el-button>
+            <el-button size="mini" v-if="scope.row.status === 2 " type="info" plain>预约</el-button>
+            <el-button size="mini" v-if="scope.row.status === 0 " type="danger" plain>未还</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -91,13 +92,13 @@ export default {
         author:'阿巴阿巴',
         startDate: '2022-05-05',
         endDate: '2022-06-05',
-        status:0
+        status:2
       },{
         name:'马大跳8',
         author:'阿巴阿巴',
         startDate: '2022-05-05',
         endDate: '2022-06-05',
-        status:0
+        status:2
       }]
     }
   }
@@ -121,20 +122,17 @@ export default {
   .clearfix:after {
     clear: both
   }
-
   .box-card {
-    width: 789px;
+    width: 660px;
     margin-top: 30px;
-    margin-left: 30px;
+    margin-left: 20px;
     height: 660px;
   }
-
   .box-card-cal {
     float: right;
-    width: 410px;
-    margin-right: 10px;
+    width: 540px;
+    margin-right: 20px;
     padding-right: 10px;
     height: 660px;
   }
-
 </style>

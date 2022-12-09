@@ -16,3 +16,12 @@ export function fetchList(query) {
     data
   })
 }
+
+// 预约借书
+export function borrowBook(data) {
+  return request({
+    url: '/user/borrow',
+    method: 'post',
+    data
+  })
+}

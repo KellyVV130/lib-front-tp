@@ -10,14 +10,11 @@
         </el-col>
       </el-row>
     </div>
-    <!-- :data="tableData.slice((currentPage-1)*pagesize, currentPage*pagesize)"-->
     <el-table
-
       :data="tableData.slice((currentPage-1)*pagesize, currentPage*pagesize)"
       stripe
-      border
       :default-sort = "{prop: 'date', order: 'descending'}"
-      style="width: 100%">
+      style="width: 100%; margin-left: 50px">
   <!--    <el-table-column type="expand">
         <template slot-scope="props">
           <el-form label-position="left" inline class="demo-table-expand">
@@ -66,7 +63,7 @@
         prop="storageAvail"
         label="可借数目">
       </el-table-column>
-      <!--<el-table-column
+      <el-table-column
         width="100"
         prop="xxx"
         label="借阅">
@@ -75,17 +72,9 @@
             size="mini"
             @click="handleBorrow(scope.$index, scope.row)">借书</el-button>
         </template>
-      </el-table-column>-->
+      </el-table-column>
     </el-table>
     <div style="margin-top: 20px; margin-left: 30%">
-       <!--<el-pagination
-        background
-        @current-change="handleCurrentChange"
-        :current-page="currentPage"
-        :page-size="pagesize"
-        :total="tableData.length"
-        layout="total, prev, pager, next, jumper" >
-      </el-pagination>-->
        <el-pagination
         background
         @current-change="handleCurrentChange"
@@ -94,20 +83,13 @@
         :total="total"
         layout="total, prev, pager, next, jumper" >
       </el-pagination>
-<!--
-      <pagination
-        v-show="total>0"
-        :total="total"
-        :page.sync="listQuery.page"
-        :limit.sync="listQuery.limit"
-        @pagination="getList" />-->
     </div>
   </div>
 </template>
 
 
 <script>
-  import { fetchList} from '@/api/book'
+  import { fetchList, borrowBook} from '@/api/book'
   export default {
     data() {
       return {
@@ -272,11 +254,22 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.$message({
-            type: 'success',
-            message: '借阅成功!'
-          });
+          // 借阅
+          const data = {
+            userId: parseInt(localStorage.getItem('id')),
+            resourceId: row.resourceId,
+            startDate: Date.now(),
+            duringTime: 30
+          }
+          borrowBook(data).then(response => {
+            if (response.data.successed) {
+              this.$message.success('借阅成功！')
+            } else {
+              this.$message.error(response.data.reason)
+            }
+          })
         }).catch(() => {
+          // 取消借阅
           this.$message({
             type: 'info',
             message: '已取消'
