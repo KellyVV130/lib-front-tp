@@ -174,7 +174,7 @@ export default {
   methods: {
     getBorrowList() {
       const data = {
-        useId: parseInt(localStorage.getItem('id')),
+        userId: parseInt(localStorage.getItem('id')),
         pageSize: this.pagesize,
         pageNum: this.currentPage
       }

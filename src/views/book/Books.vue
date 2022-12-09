@@ -89,7 +89,7 @@
 
 
 <script>
-  import { fetchList} from '@/api/book'
+  import { fetchList, borrowBook} from '@/api/book'
   export default {
     data() {
       return {
@@ -254,11 +254,22 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.$message({
-            type: 'success',
-            message: '借阅成功!'
-          });
+          // 借阅
+          const data = {
+            userId: parseInt(localStorage.getItem('id')),
+            resourceId: row.resourceId,
+            startDate: Date.now(),
+            duringTime: 30
+          }
+          borrowBook(data).then(response => {
+            if (response.data.successed) {
+              this.$message.success('借阅成功！')
+            } else {
+              this.$message.error(response.data.reason)
+            }
+          })
         }).catch(() => {
+          // 取消借阅
           this.$message({
             type: 'info',
             message: '已取消'
