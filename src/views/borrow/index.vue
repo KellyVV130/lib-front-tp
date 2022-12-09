@@ -17,7 +17,7 @@
           label="编号">
         </el-table-column>
         <el-table-column
-          prop="name"
+          prop="resourceName"
           label="书名"
           width="230">
         </el-table-column>
@@ -37,13 +37,13 @@
           width="120">
         </el-table-column>
         <el-table-column
-          prop="status"
+          prop="xx"
           label="状态"
           width="100">
           <template slot-scope="scope">
-            <el-button size="mini" v-if="scope.row.status === 1 " type="success" plain>已还</el-button>
-            <el-button size="mini" v-if="scope.row.status === 2 " type="info" plain>预约</el-button>
-            <el-button size="mini" v-if="scope.row.status === 0 " type="danger" plain>未还</el-button>
+            <el-button size="mini" v-if="!scope.row.borrowed" type="success" plain>已还</el-button>
+            <el-button size="mini" v-if="!scope.row.borrowed" type="info" plain>预约</el-button>
+            <el-button size="mini" v-if="scope.row.borrowed" type="danger" plain>未还</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -52,19 +52,21 @@
 </template>
 
 <script>
+  import { getBorrowList, postpone } from '@/api/borrow'
 export default {
   name: 'BookBorrow',
   data() {
     return {
       value: new Date(),
+      pagesize: 10,
       tableData: [{
-        name:'羊羊羊羊羊羊羊羊羊羊羊羊羊小跳',
+        resourceName:'羊羊羊羊羊羊羊羊羊羊羊羊羊小跳',
         author:'拉巴阿巴阿巴·阿巴阿巴',
         startDate: '2022-05-02',
         endDate:'2022-05-22',
         status:1
       },{
-        name:'马大跳2',
+        resourceName:'马大跳2',
         author:'阿巴阿巴',
         startDate: '2022-05-02',
         endDate:'2022-06-02',
@@ -101,7 +103,23 @@ export default {
         status:2
       }]
     }
-  }
+  },
+  mounted() {
+    this.getBorrowList()
+  },
+  methods: {
+    getBorrowList() {
+      const data = {
+        userId: parseInt(localStorage.getItem('id')),
+        pageSize: this.pagesize,
+        pageNum: this.currentPage
+      }
+      getBorrowList(data).then(response => {
+        this.tableData = response.data.list
+        // this.total = response.data.totalNum
+      })
+    },
+  },
 }
 </script>
 
