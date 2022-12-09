@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-button type="primary" size="mini" @click="openDialog(null)">添加</el-button>
+    <el-button type="primary" size="mini" @click="openDialog(null)"  v-permission="['super']">添加</el-button>
     <el-table
       v-loading="listLoading"
       :data="list"
@@ -54,7 +54,7 @@
       <el-table-column label="操作" width="200" align="center">
         <template slot-scope="scope">
           <el-button type="primary" size="mini" @click="openDialog(scope.row)">编辑</el-button>
-          <el-button type="danger" size="mini" @click="handleDelete(scope.row.userId)">删除</el-button>
+          <el-button type="danger" size="mini" @click="handleDelete(scope.row.userId)" v-permission="['super']">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -119,8 +119,8 @@
 <!--            <el-form-item label="头像" prop="avatar">-->
 <!--              <el-input v-model="userInfo.avatar" placeholder="Please input" />-->
 <!--            </el-form-item>-->
-            <el-form-item label="角色" prop="role">
-              <el-radio v-for="role in roles" :key="role.value" v-model="userInfo.role" :label="role.value">
+            <el-form-item label="角色" prop="role"  >
+              <el-radio  v-for="role in roles" :key="role.value" v-model="userInfo.role" :label="role.value">
                 {{ role.label }}
               </el-radio>
             </el-form-item>
@@ -148,9 +148,11 @@
 import { getList } from '@/api/table'
 import { deleteUser, getUsers, createUser, updateUser } from '@/api/user-m'
 import Pagination from '@/components/Pagination'
+import permission from "@/directive/permission/index";
 
 export default {
   components: { Pagination },
+  directives: { permission },
   filters: {
     roleFilter(role) {
       const roleMap = {

@@ -2,7 +2,7 @@
   <div class="dashboard-container">
     <div class="filter-container">
           <el-select
-            v-model="listQuery.userId"
+            v-model="listQuery.user_id"
             placeholder="用户"
             style="width: 200px;"
             class="filter-item"

@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-card class="box-card-cal">
-    <el-calendar v-model="value" style="width:520px; height: 500px;" >
+    <el-calendar v-model="value" style="width:420px; height: 500px;" >
     </el-calendar>
     </el-card>
     <el-card class="box-card">
@@ -142,14 +142,15 @@ export default {
     clear: both
   }
   .box-card {
-    width: 660px;
+    width: 760px;
     margin-top: 30px;
     margin-left: 20px;
+    padding-left: 50px;
     height: 660px;
   }
   .box-card-cal {
     float: right;
-    width: 540px;
+    width: 440px;
     margin-right: 20px;
     padding-right: 10px;
     height: 660px;

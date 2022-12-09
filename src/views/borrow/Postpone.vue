@@ -215,6 +215,7 @@ export default {
           } else {
             this.$message.error(response.data.reason)
           }
+          this.getBorrowList()
         })
       }).catch(() => {
         // 取消延期
