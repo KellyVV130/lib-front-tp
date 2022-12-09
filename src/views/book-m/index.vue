@@ -103,7 +103,6 @@
                 <el-option-group v-for="group in countryOptions":key="group.label" :label="group.label">
                    <el-option v-for="item in group.options" :key="item.label" :label="item.label" :value="item.label">
                      <span style="float: left">{{ item.label }}</span>
-<!--                     <span style="float: right; color: #8492a6; font-size: 13px">{{ item.value }}</span>-->
                    </el-option>
                 </el-option-group>
               </el-select>
@@ -120,11 +119,11 @@
             <el-form-item label="可借数目" prop="storageAvail">
               <el-input v-model="temp.storageAvail" type="number" placeholder="请输入数字" />
             </el-form-item>
+          </el-col>
+          <el-col :span="12">
             <el-form-item label="ISBN" prop="isbn">
               <el-input v-model="temp.isbn" placeholder="请输入" />
             </el-form-item>
-          </el-col>
-          <el-col :span="12">
             <el-form-item label="出版年份" prop="publishDate">
               <el-date-picker
                 v-model="temp.publishDate"
@@ -135,18 +134,18 @@
             <el-form-item label="出版社" prop="publisher">
               <el-input v-model="temp.publisher" placeholder="请输入全称" />
             </el-form-item>
-            <el-form-item label="所属类别" prop="category">
-               <el-cascader
-                 clearable
-                  v-model="temp.category"
-                  :options="categoryOptions"
-                  @change="handleChange">
-               </el-cascader>
-            </el-form-item>
+            <el-form-item label="类别" prop="category">
+              </el-form-item>
+              <el-select v-model="temp.country" filterable class="filter-item" placeholder="请选择">
+                   <el-option v-for="item in CatOptions" :key="item" :label="item" :value="item">
+                     <span style="float: left">{{ item }}</span>
+                   </el-option>
+              </el-select>
+
             <el-form-item label="中图分类号" prop="zhongtu">
               <el-input v-model="temp.zhongtu" placeholder="请输入" />
             </el-form-item>
-            <el-form-item label="可图分类号" prop="ketu">
+            <el-form-item label="科图分类号" prop="ketu">
               <el-input v-model="temp.ketu" placeholder="请输入" />
             </el-form-item>
             <el-form-item label="译者" prop="translator" v-if="temp.language==='中文' && temp.country!=='中国'">
@@ -220,7 +219,7 @@ export default {
       countryOptions: country,
       tableKey: undefined,
       list: null,
-      total: undefined,
+      total: 0,
       listLoading: true,
       listQuery: {
         page: 1,
@@ -267,7 +266,7 @@ export default {
         publishDate: [{required: true, message: '出版日期必填', trigger: 'blur'}]
       },
       downloadLoading: false,
-      categoryOptions: category
+      CatOptions: ['外国', '计算机', '文化', '物理', '励志', '儿童文学']
     }
   },
   created() {

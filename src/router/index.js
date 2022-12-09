@@ -46,13 +46,9 @@ export const constantRoutes = [
     component: () => import('@/views/login/auth-redirect'),
     hidden: true
   },
+]
 
-  {
-    path: '/404',
-    component: () => import('@/views/404'),
-    hidden: true
-  },
-
+export const asyncRoutes = [
   {
     path: '/',
     component: Layout,
@@ -62,24 +58,20 @@ export const constantRoutes = [
       path: 'books',
       name: 'Books',
       component: () => import('@/views/book/Books'),
-      meta: { title: '图书列表', icon: 'el-icon-s-management' }
+      meta: { title: '图书列表', icon: 'el-icon-s-management', roles: ['user', 'admin', 'super'] }
     }, {
       path: 'book',
       name: 'Book',
       component: () => import('@/views/book/index'),
-      meta: { title: '图书详情', icon: 'el-icon-s-management' },
+      meta: { title: '图书详情', icon: 'el-icon-s-management', roles: ['user'] },
       hidden: true
     }]
   },
-
-
 
   {
     path: '/borrow',
     component: Layout,
     redirect: '/borrow/preserve',
-    name: 'Borrow',
-    meta: { title: '图书借阅', icon: 'table' },
     children: [
       /*{
         path: 'preserve',
@@ -91,7 +83,7 @@ export const constantRoutes = [
         path: 'postpone',
         name: 'Postpone',
         component: () => import('@/views/borrow/Postpone'),
-        meta: { title: '借阅延期', icon: 'el-icon-user-solid', roles: ['user', 'admin', 'super'] }
+        meta: { title: '借阅延期', icon: 'el-icon-user-solid', roles: ['user'] }
       }
     ]
   },
@@ -104,13 +96,10 @@ export const constantRoutes = [
         path: 'index',
         name: 'History',
         component: () => import('@/views/borrow/index'),
-        meta: { title: '借阅记录', icon: 'table', roles: ['user', 'admin', 'super'] }
+        meta: { title: '借阅记录', icon: 'table', roles: ['user'] }
       }
     ]
-  }
-]
-
-export const asyncRoutes = [
+  },
   {
     path: '/book-manage',
     component: Layout,
@@ -149,7 +138,13 @@ export const asyncRoutes = [
       }
     ]
   },
-  { path: '*', redirect: '/404', hidden: true }
+  { path: '*', redirect: '/404', hidden: true },
+
+  {
+    path: '/404',
+    component: () => import('@/views/404'),
+    hidden: true
+  },
 ]
 
 const createRouter = () => new Router({

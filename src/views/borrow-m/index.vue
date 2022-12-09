@@ -67,7 +67,7 @@
           <span>{{ row.resource.storageAvail }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="用户" width="150px" align="center">
+      <el-table-column label="用户" align="center">
         <template slot-scope="{row}">
           <span>{{ row.user.name }}</span>
         </template>
@@ -138,7 +138,7 @@
                 style="margin-left: 20px;"
               >已超期</el-tag>
             </el-form-item>
-        <el-form-item>
+        <el-form-item v-if="dialogStatus==='update'">
           <el-button size="mini" type="danger" @click="borrowBook(temp.recordId)" v-permission="['super']">
             模拟刷卡借书
           </el-button>
@@ -262,7 +262,7 @@ export default {
         this.userList = res.data.userList
       }
     })
-    fetchList({}).then(res => {
+    fetchList({ page: 1, limit: 1000}).then(res => {
       if(res.status === 200) {
         this.bookList = res.data.list
       }
@@ -272,7 +272,7 @@ export default {
     checkPermission,
     getList() {
       fetchRecordList(this.listQuery).then(res => {
-        console.log(res)
+        console.log(res.data)
         this.list = res.data.list
         this.total = res.data.totalNum
         this.listQuery.page = res.data.pageNum
@@ -283,12 +283,12 @@ export default {
     convertStatus(record){
       if(!record.borrowed) {
         return '预定'
+      } else if(record.endDate>parseTime(new Date(),'{y}-{m}-{d}')) {
+        return '未还'
       } else if(record.expired) {
         return '超期'
-      } else if(record.endDate<parseTime(new Date(),'{y}-{m}-{d}')) {
-        return '已还'
       } else {
-        return '未还'
+        return '已还'
       }
     },
     handleFilter() {

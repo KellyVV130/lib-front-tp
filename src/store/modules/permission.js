@@ -50,11 +50,7 @@ const actions = {
   generateRoutes({ commit }, roles) {
     return new Promise(resolve => {
       let accessedRoutes
-      if (roles==='super') {
-        accessedRoutes = asyncRoutes || []
-      } else {
         accessedRoutes = filterAsyncRoutes(asyncRoutes, roles)
-      }
       commit('SET_ROUTES', accessedRoutes)
       resolve(accessedRoutes)
     })

@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+import {parseTime} from "@/utils";
 
 export function fetchRecordList(query) {
   const data = {
@@ -21,7 +22,7 @@ export function createRecord(form) {
   let data = {
     userId: form.user_id,
     resourceId: form.book_id,
-    startDate: form.startDate,
+    startDate: parseTime(form.startDate, '{y}-{m}-{d}'),
     duringTime: form.duringTime
   }
   return request({

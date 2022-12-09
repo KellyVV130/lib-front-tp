@@ -1,17 +1,16 @@
 import request from '@/utils/request'
+import {parseTime} from "@/utils";
 
 export function fetchList(query) {
   let data = {}
-  if (JSON.stringify(query)!=='{}') {
-      data = {
+  data = {
       id: query.id,
       resourceName: query.resourceName,
       author: query.author,
       pageNum: query.page,
       pageSize: query.limit,
-      sort: query.sort.substr(1),
-      order: query.sort[0]==='+'?'asc':'desc'
-    }
+      sort: query.sort && query.sort.substr(1),
+      order: query.sort && query.sort[0]==='+'?'asc':'desc'
   }
 
   return request({
@@ -31,8 +30,8 @@ export function fetchArticle(id) {
 }
 
 export function createArticle(data) {
-  data.publishDate = data.publishDate.split('T', 1)[0]
-  delete data.category
+  data.publishDate = parseTime(data.publishDate, '{y}-{m}-{d}')
+  data.access = data.access+''
   return request({
     url: '/resource/add',
     method: 'post',
@@ -41,7 +40,8 @@ export function createArticle(data) {
 }
 
 export function updateArticle(data) {
-  data.publishDate = data.publishDate.split('T', 1)[0]
+  data.publishDate = parseTime(data.publishDate, '{y}-{m}-{d}')
+  data.access = data.access+''
   return request({
     url: '/resource/update',
     method: 'post',
