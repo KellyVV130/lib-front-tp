@@ -1,8 +1,7 @@
 import request from '@/utils/request'
 
-export function fetchList(query) {
+export function fetchRecordList(query) {
   const data = {
-    id: query.id,
     resourceName: query.book_name,
     resourceId: query.book_id,
     userId: query.user_id,
@@ -20,8 +19,8 @@ export function fetchList(query) {
 
 export function createRecord(form) {
   let data = {
-    userId: form.user.id,
-    resourceId: form.resource.resourceId,
+    userId: form.user_id,
+    resourceId: form.book_id,
     startDate: form.startDate,
     duringTime: form.duringTime
   }
@@ -39,6 +38,32 @@ export function updateRecord(form) {
   }
   return request({
     url: '/user/postpone',
+    method: 'post',
+    data
+  })
+}
+
+export function deleteRecord(id) {
+  return request({
+    url: '/record/delete',
+    method: 'get',
+    params: {recordId: id}
+  })
+}
+
+export function borrowAPI(id) {
+  let data = {recordId: id}
+  return request({
+    url: '/record/borrow',
+    method: 'post',
+    data
+  })
+}
+
+export function returnAPI(id) {
+  let data = {recordId: id}
+  return request({
+    url: '/record/return',
     method: 'post',
     data
   })

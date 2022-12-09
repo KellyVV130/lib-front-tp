@@ -218,9 +218,9 @@ export default {
       };
     return {
       countryOptions: country,
-      tableKey: 0,
+      tableKey: undefined,
       list: null,
-      total: 0,
+      total: undefined,
       listLoading: true,
       listQuery: {
         page: 1,
@@ -233,8 +233,8 @@ export default {
       temp: {
         resourceId: undefined,
         resourceName: '',
-        storageAll: 0,
-        storageAvail: 0,
+        storageAll: undefined,
+        storageAvail: undefined,
         author: '',
         language: '',
         country: '',
@@ -313,8 +313,8 @@ export default {
       this.temp = {
         resourceId: undefined,
         resourceName: '',
-        storageAll: 0,
-        storageAvail: 0,
+        storageAll: undefined,
+        storageAvail: undefined,
         author: '',
         language: '',
         country: '',
@@ -395,13 +395,6 @@ export default {
       })
     },
     handleDelete(row, index) {
-      // this.$notify({
-      //   title: 'Success',
-      //   message: 'Delete Successfully',
-      //   type: 'success',
-      //   duration: 2000
-      // })
-      // this.list.splice(index, 1)
       this.$confirm('此操作将永久删除该图书, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',

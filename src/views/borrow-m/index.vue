@@ -1,23 +1,25 @@
 <template>
   <div class="dashboard-container">
     <div class="filter-container">
-          <el-input
-            v-model="listQuery.book_name"
-            placeholder="书名"
+          <el-select
+            v-model="listQuery.userId"
+            placeholder="用户"
             style="width: 200px;"
             class="filter-item"
-            @keyup.enter.native="handleFilter"
-          />
-          <el-input
-            v-model="listQuery.user_id"
-            placeholder="用户id"
-            style="width: 200px; margin-left: 20px;"
-            class="filter-item"
-            @keyup.enter.native="handleFilter"
-          />
-          <el-input
+            @keyup.enter.native="handleFilter">
+            <el-option v-for="item in userList" :key="item.userId" :label="item.name" :value="item.userId" />
+          </el-select>
+          <el-select
             v-model="listQuery.book_id"
             placeholder="图书id"
+            style="width: 200px; margin-left: 20px;"
+            class="filter-item"
+            @keyup.enter.native="handleFilter">
+            <el-option v-for="item in bookList" :key="item.resourceId" :label="item.resourceName" :value="item.resourceId" />
+          </el-select>
+          <el-input
+            v-model="listQuery.book_name"
+            placeholder="图书名称"
             style="width: 200px; margin-left: 20px;"
             class="filter-item"
             @keyup.enter.native="handleFilter"
@@ -42,7 +44,7 @@
     >
       <el-table-column label="编号" prop="recordId" sortable="custom" align="center" width="80" :class-name="getSortClass('recordId')">
         <template slot-scope="{row}">
-          <span>{{ row.recordId }}</span>
+          <span>{{ row.resource.recordId }}</span>
         </template>
       </el-table-column>
       <el-table-column label="书名" prop="book_name" min-width="150px">
@@ -104,10 +106,14 @@
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="50%">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-width="90px">
             <el-form-item label="用户id" prop="user_id">
-              <el-input v-model="temp.user.id" placeholder="" />
+              <el-select v-model="temp.user_id" class="filter-item">
+                <el-option v-for="item in userList" :key="item.userId" :label="item.name" :value="item.userId" />
+              </el-select>
             </el-form-item>
             <el-form-item label="图书id" prop="book_id">
-              <el-input v-model="temp.resource.resourceId" placeholder="" />
+              <el-select v-model="temp.book_id" class="filter-item">
+                <el-option v-for="item in bookList" :key="item.resourceId" :label="item.resourceName" :value="item.resourceId" />
+              </el-select>
             </el-form-item>
             <el-form-item label="开始日期" prop="startDate">
               <el-date-picker
@@ -132,12 +138,20 @@
                 style="margin-left: 20px;"
               >已超期</el-tag>
             </el-form-item>
+        <el-form-item>
+          <el-button size="mini" type="danger" @click="borrowBook(temp.recordId)" v-permission="['super']">
+            模拟刷卡借书
+          </el-button>
+          <el-button size="mini" type="danger" @click="returnBook(temp.recordId)" v-permission="['super']">
+            模拟还书
+          </el-button>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
           取消
         </el-button>
-        <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()" :disabled="!checkPermission['super']">
+        <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()" v-permission="['super']">
           提交
         </el-button>
       </div>
@@ -146,7 +160,7 @@
 </template>
 
 <script>
-import { fetchList,  createRecord, updateRecord } from '@/api/borrow-m'
+import {createRecord, updateRecord, borrowAPI, returnAPI, fetchRecordList, deleteRecord} from '@/api/borrow-m'
 import waves from '@/directive/waves' // waves directive
 import permission from "@/directive/permission/index";
 import { parseTime } from '@/utils'
@@ -154,6 +168,8 @@ import {country} from '@/utils/country'
 import Pagination from '@/components/Pagination'
 import {category} from "@/utils/category"; // secondary package based on el-pagination
 import checkPermission from "@/utils/permission";
+import {getUsers} from "@/api/user-m";
+import {fetchList} from "@/api/book-m";
 
 export default {
   name: 'BorrowManage',
@@ -190,9 +206,11 @@ export default {
         book_name: undefined,
         user_id: undefined,
         book_id: undefined,
-        sort: '+id'
+        sort: '+recordId'
       },
       temp: {
+        user_id: undefined,
+        book_id: undefined,
         recordId: undefined,
         user:{
           id: undefined,
@@ -201,15 +219,15 @@ export default {
         resource:{
           resourceId: undefined,
           resourceName: '',
-          storageAll: 0,
-          storageAvail: 0,
+          storageAll: undefined,
+          storageAvail: undefined,
           author: undefined,
           language: undefined,
           country: undefined,
           isbn: undefined,
         },
         startDate: parseTime(new Date(), '{y}-{m}-{d}'),
-        duringTime: 0,
+        duringTime: undefined,
         endDate: undefined,
         borrowed: false,
         postponed: false,
@@ -226,21 +244,34 @@ export default {
       dialogPvVisible: false,
       pvData: [],
       rules: {
-        user_id: [{ required: true, message: 'name is required', trigger: 'change' }],
-        book_id: [{ required: true, message: 'author is required', trigger: 'change' }],
-        duringTime: [{ required: true, message: 'title is required', trigger: 'blur' },
+        user_id: [{ required: true, message: '必填', trigger: 'change' }],
+        book_id: [{ required: true, message: '必填', trigger: 'change' }],
+        duringTime: [{ required: true, message: '必填', trigger: 'blur' },
           {validator: checkStorage, trigger: 'blur'}],
       },
       downloadLoading: false,
-      categoryOptions: category
+      categoryOptions: category,
+      userList: [],
+      bookList: []
     }
   },
   created() {
     this.getList()
+    getUsers({}).then(res => {
+      if(res.status === 200) {
+        this.userList = res.data.userList
+      }
+    })
+    fetchList({}).then(res => {
+      if(res.status === 200) {
+        this.bookList = res.data.list
+      }
+    })
   },
   methods: {
+    checkPermission,
     getList() {
-      fetchList(this.listQuery).then(res => {
+      fetchRecordList(this.listQuery).then(res => {
         console.log(res)
         this.list = res.data.list
         this.total = res.data.totalNum
@@ -293,15 +324,15 @@ export default {
         resource:{
           resourceId: undefined,
           resourceName: '',
-          storageAll: 0,
-          storageAvail: 0,
+          storageAll: undefined,
+          storageAvail: undefined,
           author: undefined,
           language: undefined,
           country: undefined,
           isbn: undefined,
         },
         startDate: parseTime(new Date(), '{y}-{m}-{d}'),
-        duringTime: 0,
+        duringTime: undefined,
         endDate: undefined,
         borrowed: false,
         postponed: false,
@@ -321,7 +352,7 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           createRecord(this.temp).then((res) => {
-            if(res.data.successed || res.data.record) {
+            if (res.data.successed || res.data.record) {
               this.$message({
                 message: res.data.reason,
                 type: 'success'
@@ -330,13 +361,13 @@ export default {
               this.dialogFormVisible = false
             } else {
               this.$message({
-                message: res.data.reason,
+                message: res.data.reason || res.error,
                 type: 'error'
               })
             }
           }).catch(e => {
             this.$message({
-              message: e,
+              message: e.error,
               type: 'error'
             })
           })
@@ -345,6 +376,8 @@ export default {
     },
     handleUpdate(row) {
       this.temp = Object.assign({}, row) // copy obj
+      this.temp.user_id = this.temp.userId
+      this.temp.book_id = this.temp.resource.resourceId
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {
@@ -355,7 +388,7 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           updateRecord(this.temp).then((res) => {
-            if(res.data.successed || res.data.record) {
+            if (res.data.successed || res.data.record) {
               this.$message({
                 message: res.data.reason,
                 type: 'success'
@@ -378,29 +411,30 @@ export default {
       })
     },
     handleDelete(row, index) {
-      // this.$notify({
-      //   title: 'Success',
-      //   message: 'Delete Successfully',
-      //   type: 'success',
-      //   duration: 2000
-      // })
-      // this.list.splice(index, 1)
       this.$confirm('此操作将永久删除该图书, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        // TODO real delete api
-        this.$message({
-          type: 'success',
-          message: '删除成功!'
-        });
+        deleteRecord(row.recordId).then(res => {
+          if(res.status === 200) {
+            this.$message({
+              message: res.data.reason,
+              type: res.data.successed?'success':'error'
+            })
+          }
+        }).catch(e=>{
+          this.$message({
+            message: e,
+            type: 'error'
+          })
+        })
       }).catch(() => {
         this.$message({
           type: 'info',
           message: '已取消删除'
-        });
-      });
+        })
+      })
     },
     formatJson(filterVal) {
       return this.list.map(v => filterVal.map(j => {
@@ -415,7 +449,50 @@ export default {
       const sort = this.listQuery.sort
       return sort === `+${key}` ? 'ascending' : 'descending'
     },
-    checkPermission
+    borrowBook(id) {
+      borrowAPI(id).then(res => {
+        if(res.status === 200 && res.data.successed) {
+          this.$message({
+            message: res.data.reason,
+            type: 'success'
+          })
+              this.getList()
+              this.dialogFormVisible = false
+        } else {
+          this.$message({
+            message: res.data.reason,
+            type: 'error'
+          })
+        }
+      }).catch(() => {
+        this.$message({
+            message: '借书失败',
+            type: 'error'
+          })
+      })
+    },
+    returnBook(id) {
+      returnAPI(id).then(res => {
+        if(res.status === 200 && res.data.successed) {
+          this.$message({
+            message: res.data.reason,
+            type: 'success'
+          })
+              this.getList()
+              this.dialogFormVisible = false
+        } else {
+          this.$message({
+            message: res.data.reason,
+            type: 'error'
+          })
+        }
+      }).catch(() => {
+        this.$message({
+            message: '还书失败',
+            type: 'error'
+          })
+      })
+    }
   }
 }
 </script>

@@ -1,15 +1,19 @@
 import request from '@/utils/request'
 
 export function fetchList(query) {
-  const data = {
-    id: query.id,
-    resourceName: query.resourceName,
-    author: query.author,
-    pageNum: query.page,
-    pageSize: query.limit,
-    sort: query.sort.substr(1),
-    order: query.sort[0]==='+'?'asc':'desc'
+  let data = {}
+  if (JSON.stringify(query)!=='{}') {
+      data = {
+      id: query.id,
+      resourceName: query.resourceName,
+      author: query.author,
+      pageNum: query.page,
+      pageSize: query.limit,
+      sort: query.sort.substr(1),
+      order: query.sort[0]==='+'?'asc':'desc'
+    }
   }
+
   return request({
     url: '/resource/public/list',
     method: 'post',
@@ -27,6 +31,7 @@ export function fetchArticle(id) {
 }
 
 export function createArticle(data) {
+  data.publishDate = data.publishDate.split('T', 1)[0]
   delete data.category
   return request({
     url: '/resource/add',
@@ -36,6 +41,7 @@ export function createArticle(data) {
 }
 
 export function updateArticle(data) {
+  data.publishDate = data.publishDate.split('T', 1)[0]
   return request({
     url: '/resource/update',
     method: 'post',

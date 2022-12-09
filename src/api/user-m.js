@@ -41,8 +41,8 @@ export function getUsers(data) {
 export function getUserInfo(data) {
   return request({
     urls: '/user/get',
-    method: 'post',
-    data
+    method: 'get',
+    params: data
   })
 }
 
