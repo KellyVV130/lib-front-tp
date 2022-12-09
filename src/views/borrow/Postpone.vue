@@ -74,15 +74,15 @@
         :index="indexMethod">
       </el-table-column>
       <el-table-column
-        prop="name"
+        prop="resourceName"
         label="书名"
         width="290">
       </el-table-column>
-      <el-table-column
-        prop="author"
-        label="作者"
-        width="250">
-      </el-table-column>
+<!--      <el-table-column-->
+<!--        prop="author"-->
+<!--        label="作者"-->
+<!--        width="250">-->
+<!--      </el-table-column>-->
       <el-table-column
         prop="startDate"
         label="借阅日期"
@@ -100,7 +100,12 @@
         <template slot-scope="scope">
           <el-button
             size="mini"
-            @click="handleBorrow(scope.$index, scope.row)">延期</el-button>
+            @click="handleBorrow(scope.$index, scope.row)"
+            v-if="!scope.row.postponed">延期</el-button>
+          <el-button
+            size="mini"
+            type="info"
+            v-if="scope.row.postponed">已延期</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -109,9 +114,25 @@
 </template>
 
 <script>
+import { getBorrowList, postpone } from '@/api/borrow'
+
 export default {
   name: 'Postpone',
+  mounted() {
+    this.getBorrowList()
+  },
   methods: {
+    getBorrowList() {
+      const data = {
+        useId: parseInt(localStorage.getItem('id')),
+        pageSize: this.pagesize,
+        pageNum: this.currentPage
+      }
+      getBorrowList(data).then(response => {
+        this.tableData = response.data.list
+        // this.total = response.data.totalNum
+      })
+    },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
@@ -126,17 +147,26 @@ export default {
       this.$refs[formName].resetFields();
     },
     handleBorrow(index, row) {
+      // 延期
       console.log(index, row);
       this.$confirm('确认延长此书借阅期限, 是否继续?', '确认延期', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.$message({
-          type: 'success',
-          message: '延期成功!'
-        });
+        // 延期
+        postpone({
+          recordId: row.recordId,
+          postponeTime: 30
+        }).then(response => {
+          if (response.data.successed === true) {
+            this.$message.success('延期30天成功！')
+          } else {
+            this.$message.error(response.data.reason)
+          }
+        })
       }).catch(() => {
+        // 取消延期
         this.$message({
           type: 'info',
           message: '已取消'
@@ -176,7 +206,8 @@ export default {
       search:'',
       pagesize: 10,
       currentPage: 1,
-      tableData: [{
+      tableData: [
+        {
         name:'马大跳2',
         author:'阿巴阿巴',
         startDate: '2022-05-02',
