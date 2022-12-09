@@ -66,7 +66,7 @@
     <el-table
       :data="tableData.slice((currentPage-1)*pagesize, currentPage*pagesize)"
       :default-sort = "{prop: 'date', order: 'descending'}"
-      style="width: 100%; margin-left: 30px">
+      style="width: 100%; margin-left: 150px">
       <el-table-column
         type="index"
         label="编号"
@@ -118,6 +118,56 @@ import { getBorrowList, postpone } from '@/api/borrow'
 
 export default {
   name: 'Postpone',
+
+  data() {
+    return {
+      dialogTableVisible: false,
+      dialogFormVisible: false,
+      ruleForm: {
+        name: 'xhh',
+        phone: '',
+        home:'',
+      },
+      rules: {
+        phone: [
+          { required: true, message: '请输入手机号', trigger: 'blur' },
+          { min: 11, max: 11, message: '长度为 11 个字符', trigger: 'blur' }
+        ],
+        home: [
+          { required: true, message: '请填写联系地址', trigger: 'blur' }
+        ]
+      },
+      search:'',
+      pagesize: 10,
+      currentPage: 1,
+      tableData: [
+        {
+          name:'马大跳2',
+          author:'阿巴阿巴',
+          startDate: '2022-05-02',
+          endDate:'2022-06-02',
+          status:0
+        },{
+          name:'马小跳4',
+          author:'阿巴阿巴',
+          startDate: '2022-05-05',
+          endDate: '2022-06-05',
+          status:0
+        }, {
+          name:'马小跳7',
+          author:'阿巴阿巴',
+          startDate: '2022-05-05',
+          endDate: '2022-06-05',
+          status:0
+        }, {
+          name:'马大跳8',
+          author:'阿巴阿巴',
+          startDate: '2022-05-05',
+          endDate: '2022-06-05',
+          status:0
+        }]
+    }
+  },
   mounted() {
     this.getBorrowList()
   },
@@ -183,55 +233,6 @@ export default {
     handleCurrentChange(val) {
       this.currentPage = val;
       console.log(`当前页: ${val}`);
-    }
-  },
-  data() {
-    return {
-      dialogTableVisible: false,
-      dialogFormVisible: false,
-      ruleForm: {
-        name: 'const { name } = await store.dispatch(\'user/getInfo\')',
-        phone: '',
-        home:'',
-      },
-      rules: {
-        phone: [
-          { required: true, message: '请输入手机号', trigger: 'blur' },
-          { min: 11, max: 11, message: '长度为 11 个字符', trigger: 'blur' }
-        ],
-        home: [
-          { required: true, message: '请填写联系地址', trigger: 'blur' }
-        ]
-      },
-      search:'',
-      pagesize: 10,
-      currentPage: 1,
-      tableData: [
-        {
-        name:'马大跳2',
-        author:'阿巴阿巴',
-        startDate: '2022-05-02',
-        endDate:'2022-06-02',
-        status:0
-      },{
-        name:'马小跳4',
-        author:'阿巴阿巴',
-        startDate: '2022-05-05',
-        endDate: '2022-06-05',
-        status:0
-      }, {
-        name:'马小跳7',
-        author:'阿巴阿巴',
-        startDate: '2022-05-05',
-        endDate: '2022-06-05',
-        status:0
-      }, {
-        name:'马大跳8',
-        author:'阿巴阿巴',
-        startDate: '2022-05-05',
-        endDate: '2022-06-05',
-        status:0
-      }]
     }
   },
 }
