@@ -55,8 +55,8 @@ export default {
   data() {
     return {
       loginForm: {
-        name: 'xh',
-        password: '123'
+        name: '用户1',
+        password: '123abc.'
       },
       loginRules: {
         name: [{ required: true, trigger: 'blur' }],

@@ -31,11 +31,11 @@
           <span>{{ scope.row.createdTime }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="借阅卡ID" width="120" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.cardId }}</span>
-        </template>
-      </el-table-column>
+<!--      <el-table-column label="借阅卡ID" width="120" align="center">-->
+<!--        <template slot-scope="scope">-->
+<!--          <span>{{ scope.row.cardId }}</span>-->
+<!--        </template>-->
+<!--      </el-table-column>-->
 <!--      <el-table-column label="头像" width="120" align="center">-->
 <!--        <template slot-scope="scope">-->
 <!--          <span>{{ scope.row.avatar }}</span>-->
@@ -280,6 +280,7 @@ export default {
       createUser(data).then(response => {
         this.$message.success('添加用户成功！')
         this.dialogCreateVisible = false
+        this.getUserList()
       })
     },
     // 删除某个用户

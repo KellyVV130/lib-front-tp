@@ -3,7 +3,7 @@
     <el-card class="box-card">
       <el-descriptions class="margin-top" title="个人信息" :column="3" :size="size" border>
         <template slot="extra">
-          <el-button type="primary" @click="dialogFormVisible = true" size="small">编辑</el-button>
+<!--          <el-button type="primary" @click="dialogFormVisible = true" size="small">编辑</el-button>-->
 
           <el-dialog title="个人信息" :visible.sync="dialogFormVisible">
             <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
@@ -44,7 +44,7 @@
             <i class="el-icon-tickets" ></i>
             正在借阅
           </template>
-          <el-tag size="small">4</el-tag>
+          <el-tag size="small">{{ total }}</el-tag>
         </el-descriptions-item>
         <el-descriptions-item>
           <template slot="label">
@@ -124,7 +124,7 @@ export default {
       dialogTableVisible: false,
       dialogFormVisible: false,
       ruleForm: {
-        name: 'xhh',
+        name: this.$store.getters.name,
         phone: '',
         home:'',
       },
@@ -140,32 +140,33 @@ export default {
       search:'',
       pagesize: 10,
       currentPage: 1,
-      tableData: [
-        {
-          name:'马大跳2',
-          author:'阿巴阿巴',
-          startDate: '2022-05-02',
-          endDate:'2022-06-02',
-          status:0
-        },{
-          name:'马小跳4',
-          author:'阿巴阿巴',
-          startDate: '2022-05-05',
-          endDate: '2022-06-05',
-          status:0
-        }, {
-          name:'马小跳7',
-          author:'阿巴阿巴',
-          startDate: '2022-05-05',
-          endDate: '2022-06-05',
-          status:0
-        }, {
-          name:'马大跳8',
-          author:'阿巴阿巴',
-          startDate: '2022-05-05',
-          endDate: '2022-06-05',
-          status:0
-        }]
+      tableData: [],
+      total: 0,
+        // {
+        //   name:'马大跳2',
+        //   author:'阿巴阿巴',
+        //   startDate: '2022-05-02',
+        //   endDate:'2022-06-02',
+        //   status:0
+        // },{
+        //   name:'马小跳4',
+        //   author:'阿巴阿巴',
+        //   startDate: '2022-05-05',
+        //   endDate: '2022-06-05',
+        //   status:0
+        // }, {
+        //   name:'马小跳7',
+        //   author:'阿巴阿巴',
+        //   startDate: '2022-05-05',
+        //   endDate: '2022-06-05',
+        //   status:0
+        // }, {
+        //   name:'马大跳8',
+        //   author:'阿巴阿巴',
+        //   startDate: '2022-05-05',
+        //   endDate: '2022-06-05',
+        //   status:0
+        // }]
     }
   },
   mounted() {
@@ -179,8 +180,8 @@ export default {
         pageNum: this.currentPage
       }
       getBorrowList(data).then(response => {
-        this.tableData = response.data.list
-        // this.total = response.data.totalNum
+        this.tableData = response.data.list.filter(e => e.borrowed == true )
+        this.total = this.tableData.length
       })
     },
     submitForm(formName) {

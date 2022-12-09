@@ -41,9 +41,10 @@
           label="状态"
           width="100">
           <template slot-scope="scope">
-            <el-button size="mini" v-if="!scope.row.borrowed" type="success" plain>已还</el-button>
-            <el-button size="mini" v-if="!scope.row.borrowed" type="info" plain>预约</el-button>
-            <el-button size="mini" v-if="scope.row.borrowed" type="danger" plain>未还</el-button>
+            <el-button size="mini" v-if="scope.row.borrowed && !scope.row.expired" type="warning" plain>未还</el-button>
+            <el-button size="mini" v-else-if="!scope.row.borrowed && scope.row.expired" type="success" plain>已还</el-button>
+            <el-button size="mini" v-else-if="scope.row.borrowed && scope.row.endDate < new Date().toLocaleDateString()" type="danger" plain>逾期</el-button>
+            <el-button size="mini" v-else type="info" plain>预约</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -59,49 +60,49 @@ export default {
     return {
       value: new Date(),
       pagesize: 10,
-      tableData: [{
-        resourceName:'羊羊羊羊羊羊羊羊羊羊羊羊羊小跳',
-        author:'拉巴阿巴阿巴·阿巴阿巴',
-        startDate: '2022-05-02',
-        endDate:'2022-05-22',
-        status:1
-      },{
-        resourceName:'马大跳2',
-        author:'阿巴阿巴',
-        startDate: '2022-05-02',
-        endDate:'2022-06-02',
-        status:0
-      },{
-        name:'人工智能导论',
-        author:'金军委',
-        startDate: '2022-05-03',
-        endDate:'2022-05-11',
-        status:1
-      },{
-        name:'人工智能原理、技术及应用',
-        author:'安俊秀',
-        startDate: '2022-05-03',
-        endDate: '2022-05-11',
-        status:1
-      },{
-        name:'马小跳4',
-        author:'阿巴阿巴',
-        startDate: '2022-05-05',
-        endDate: '2022-06-05',
-        status:0
-      },{
-        name:'马小跳7',
-        author:'阿巴阿巴',
-        startDate: '2022-05-05',
-        endDate: '2022-06-05',
-        status:2
-      },{
-        name:'马大跳8',
-        author:'阿巴阿巴',
-        startDate: '2022-05-05',
-        endDate: '2022-06-05',
-        status:2
-      }]
+      tableData: []
+      //   resourceName:'羊羊羊羊羊羊羊羊羊羊羊羊羊小跳',
+      //   author:'拉巴阿巴阿巴·阿巴阿巴',
+      //   startDate: '2022-05-02',
+      //   endDate:'2022-05-22',
+      //   status:1
+      // },{
+      //   resourceName:'马大跳2',
+      //   author:'阿巴阿巴',
+      //   startDate: '2022-05-02',
+      //   endDate:'2022-06-02',
+      //   status:0
+      // },{
+      //   name:'人工智能导论',
+      //   author:'金军委',
+      //   startDate: '2022-05-03',
+      //   endDate:'2022-05-11',
+      //   status:1
+      // },{
+      //   name:'人工智能原理、技术及应用',
+      //   author:'安俊秀',
+      //   startDate: '2022-05-03',
+      //   endDate: '2022-05-11',
+      //   status:1
+      // },{
+      //   name:'马小跳4',
+      //   author:'阿巴阿巴',
+      //   startDate: '2022-05-05',
+      //   endDate: '2022-06-05',
+      //   status:0
+      // },{
+      //   name:'马小跳7',
+      //   author:'阿巴阿巴',
+      //   startDate: '2022-05-05',
+      //   endDate: '2022-06-05',
+      //   status:2
+      // },{
+      //   name:'马大跳8',
+      //   author:'阿巴阿巴',
+      //   startDate: '2022-05-05',
+      //   endDate: '2022-06-05',
+      //   status:2
+      // }]
     }
   },
   mounted() {

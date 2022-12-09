@@ -38,13 +38,13 @@
           <span>{{ row.resourceId }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="书名" prop="resourceName" min-width="150px" sortable="custom" :class-name="getSortClass('resourceName')">
+      <el-table-column label="书名" prop="resourceName" min-width="140px" sortable="custom" :class-name="getSortClass('resourceName')">
         <template slot-scope="{row}">
           <span class="link-type" @click="handleUpdate(row)">{{ row.resourceName }}</span>
 <!--          <el-tag>{{ row.type | typeFilter }}</el-tag>-->
         </template>
       </el-table-column>
-      <el-table-column label="作者" prop="author" sortable="custom" width="110px" align="center">
+      <el-table-column label="作者" prop="author" sortable="custom" width="120px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.author }}</span>
         </template>
@@ -100,7 +100,7 @@
             </el-form-item>
             <el-form-item label="作者国籍" prop="country">
               <el-select v-model="temp.country" filterable class="filter-item" placeholder="请选择">
-                <el-option-group v-for="group in countryOptions":key="group.label" :label="group.label">
+                <el-option-group v-for="group in countryOptions" :key="group.label" :label="group.label">
                    <el-option v-for="item in group.options" :key="item.label" :label="item.label" :value="item.label">
                      <span style="float: left">{{ item.label }}</span>
                    </el-option>
@@ -135,12 +135,12 @@
               <el-input v-model="temp.publisher" placeholder="请输入全称" />
             </el-form-item>
             <el-form-item label="类别" prop="category">
-              </el-form-item>
-              <el-select v-model="temp.country" filterable class="filter-item" placeholder="请选择">
-                   <el-option v-for="item in CatOptions" :key="item" :label="item" :value="item">
-                     <span style="float: left">{{ item }}</span>
-                   </el-option>
+              <el-select v-model="temp.category" filterable class="filter-item" placeholder="请选择">
+                <el-option v-for="item in CatOptions" :key="item" :label="item" :value="item">
+                  <span style="float: left">{{ item }}</span>
+                </el-option>
               </el-select>
+            </el-form-item>
 
             <el-form-item label="中图分类号" prop="zhongtu">
               <el-input v-model="temp.zhongtu" placeholder="请输入" />

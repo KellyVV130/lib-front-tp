@@ -267,6 +267,7 @@
             } else {
               this.$message.error(response.data.reason)
             }
+            this.getList()
           })
         }).catch(() => {
           // 取消借阅
