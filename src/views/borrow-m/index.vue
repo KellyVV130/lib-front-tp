@@ -44,7 +44,7 @@
     >
       <el-table-column label="编号" prop="recordId" sortable="custom" align="center" width="80" :class-name="getSortClass('recordId')">
         <template slot-scope="{row}">
-          <span>{{ row.resource.recordId }}</span>
+          <span>{{ row.recordId }}</span>
         </template>
       </el-table-column>
       <el-table-column label="书名" prop="book_name" min-width="150px">
@@ -422,6 +422,7 @@ export default {
               message: res.data.reason,
               type: res.data.successed?'success':'error'
             })
+            this.getList()
           }
         }).catch(e=>{
           this.$message({
