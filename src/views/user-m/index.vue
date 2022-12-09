@@ -297,9 +297,10 @@ export default {
       })
     },
     // 修改页大小/页码
-    changePage(currentPage, pageSize) {
-      this.pageInfo.currentPage = currentPage
-      this.pageInfo.pageSize = pageSize
+    changePage(data) {
+      this.pageInfo.currentPage = data.page
+      this.pageInfo.pageSize = data.limit
+      console.log(this.pageInfo)
       this.getUserList()
     }
   }

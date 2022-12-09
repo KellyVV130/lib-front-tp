@@ -160,7 +160,7 @@ export default {
       dialogTableVisible: false,
       dialogFormVisible: false,
       ruleForm: {
-        name: '陈老八',
+        name: 'const { name } = await store.dispatch(\'user/getInfo\')',
         phone: '',
         home:'',
       },

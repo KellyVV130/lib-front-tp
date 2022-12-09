@@ -125,14 +125,15 @@ export default {
   .box-card {
     width: 789px;
     margin-top: 30px;
-    margin-left: 10px;
+    margin-left: 30px;
     height: 660px;
   }
 
   .box-card-cal {
     float: right;
-    width: 388px;
-    margin-right: 13px;
+    width: 410px;
+    margin-right: 10px;
+    padding-right: 10px;
     height: 660px;
   }
 
