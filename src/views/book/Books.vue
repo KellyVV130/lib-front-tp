@@ -10,13 +10,15 @@
         </el-col>
       </el-row>
     </div>
+    <!-- :data="tableData.slice((currentPage-1)*pagesize, currentPage*pagesize)"-->
     <el-table
+
       :data="tableData.slice((currentPage-1)*pagesize, currentPage*pagesize)"
       stripe
       border
       :default-sort = "{prop: 'date', order: 'descending'}"
       style="width: 100%">
-      <el-table-column type="expand">
+  <!--    <el-table-column type="expand">
         <template slot-scope="props">
           <el-form label-position="left" inline class="demo-table-expand">
             <el-form-item label="国家">
@@ -36,9 +38,9 @@
             </el-form-item>
           </el-form>
         </template>
-      </el-table-column>
+      </el-table-column>-->
       <el-table-column
-        prop="name"
+        prop="resourceName"
         label="书名"
         sortable
         width="290">
@@ -56,15 +58,15 @@
       </el-table-column>
       <el-table-column
         width="100"
-        prop="storage_all"
+        prop="storageAll"
         label="馆藏书目">
       </el-table-column>
       <el-table-column
         width="100"
-        prop="storage_avail"
+        prop="storageAvail"
         label="可借数目">
       </el-table-column>
-      <el-table-column
+      <!--<el-table-column
         width="100"
         prop="xxx"
         label="借阅">
@@ -73,24 +75,195 @@
             size="mini"
             @click="handleBorrow(scope.$index, scope.row)">借书</el-button>
         </template>
-      </el-table-column>
+      </el-table-column>-->
     </el-table>
     <div style="margin-top: 20px; margin-left: 30%">
-       <el-pagination
+       <!--<el-pagination
         background
         @current-change="handleCurrentChange"
         :current-page="currentPage"
         :page-size="pagesize"
         :total="tableData.length"
         layout="total, prev, pager, next, jumper" >
+      </el-pagination>-->
+       <el-pagination
+        background
+        @current-change="handleCurrentChange"
+        :current-page="currentPage"
+        :page-size="pagesize"
+        :total="total"
+        layout="total, prev, pager, next, jumper" >
       </el-pagination>
+<!--
+      <pagination
+        v-show="total>0"
+        :total="total"
+        :page.sync="listQuery.page"
+        :limit.sync="listQuery.limit"
+        @pagination="getList" />-->
     </div>
   </div>
 </template>
 
 
 <script>
+  import { fetchList} from '@/api/book'
   export default {
+    data() {
+      return {
+        listQuery: {
+        /*  page: 1,
+          limit: 10,*/
+          resourceName: undefined,
+          author: undefined,
+          publisher: undefined,
+          sort: '+resourceId'
+        },
+        total: '',
+        search:'',
+        pagesize:10,
+        currentPage: 1,
+        tableData: null,
+        /*        tableData:
+                  [
+                    {
+                  name:'羊羊羊羊羊羊羊羊羊羊羊羊羊小跳',
+                  author:'拉巴阿巴阿巴·阿巴阿巴',
+                  publisher:'人民出版社',
+                  storage_all:5,
+                  storage_avail:2,
+                  ISBN:'2-11-003242-1',
+                  country:'厄瓜尔多',
+                  language:'中文',
+                  publish_date:2008,
+                  zhongtu:'I523.84'
+                }, {
+                  name:'马小跳1',
+                  author:'阿巴阿巴',
+                  publisher:'人民出版社',
+                  storage_all:5,
+                  storage_avail:2,
+                  ISBN:'3-11-003242-1',
+                  country:'中国',
+                  language:'中文',
+                  publish_date:2008,
+                  zhongtu:'I523.84'
+                }, {
+                  name:'马大跳2',
+                  author:'阿巴阿巴',
+                  publisher:'人民出版社',
+                  storage_all:5,
+                  storage_avail:3,
+                  ISBN:'3-11-003242-2',
+                  country:'中国',
+                  language:'中文',
+                  publish_date:2008,
+                  zhongtu:'I523.84'
+                }, {
+                  name:'马大跳3',
+                  author:'阿巴阿巴',
+                  publisher:'人民出版社',
+                  storage_all:6,
+                  storage_avail:3,
+                  ISBN:'3-11-003242-3',
+                  country:'中国',
+                  language:'中文',
+                  publish_date:2008,
+                  zhongtu:'I523.84'
+                },  {
+                  name:'人工智能原理、技术及应用',
+                  author:'安俊秀',
+                  publisher:'机械工业出版社',
+                  storage_all:2,
+                  storage_avail:2,
+                  ISBN:'978-7-111-70777-6',
+                  country:'中国',
+                  language:'中文',
+                  publish_date:2022,
+                  zhongtu:'TP18'
+                },  {
+                  name:'人工智能导论',
+                  author:'金军委',
+                  publisher:'北京大学出版社',
+                  storage_all:2,
+                  storage_avail:2,
+                  ISBN:'978-7-301-33118-7',
+                  country:'中国',
+                  language:'中文',
+                  publish_date:2022,
+                  zhongtu:'TP18'
+                }, {
+                  name:'马小跳4',
+                  author:'阿巴阿巴',
+                  publisher:'人民出版社',
+                  storage_all:5,
+                  storage_avail:5,
+                  ISBN:'3-11-003242-4',
+                  country:'中国',
+                  language:'中文',
+                  publish_date:2008,
+                  zhongtu:'I523.84'
+                }, {
+                  name:'马小跳5',
+                  author:'阿巴阿巴',
+                  publisher:'人民出版社',
+                  storage_all:5,
+                  storage_avail:3
+                },  {
+                  name:'马小跳7',
+                  author:'阿巴阿巴',
+                  publisher:'人民出版社',
+                  storage_all:5,
+                  storage_avail:3
+                }, {
+                  name:'马大跳8',
+                  author:'阿巴阿巴',
+                  publisher:'人民出版社',
+                  storage_all:5,
+                  storage_avail:5
+                }, {
+                  name:'马大跳9',
+                  author:'阿巴阿巴',
+                  publisher:'人民出版社',
+                  storage_all:11,
+                  storage_avail:10
+                }, {
+                  name:'马小跳10',
+                  author:'阿巴阿巴',
+                  publisher:'人民出版社',
+                  storage_all:3,
+                  storage_avail:3
+                },{
+                  name:'马小跳11',
+                  author:'阿巴阿巴',
+                  publisher:'人民出版社',
+                  storage_all:3,
+                  storage_avail:3
+                },{
+                  name:'马小跳12',
+                  author:'阿巴阿巴',
+                  publisher:'人民出版社',
+                  storage_all:1,
+                  storage_avail:1
+                },{
+                  name:'马小跳13',
+                  author:'阿巴阿巴',
+                  publisher:'人民出版社',
+                  storage_all:11,
+                  storage_avail:8
+                },
+                    {
+                  name:'马小跳6',
+                  author:'阿巴阿巴',
+                  publisher:'人民出版社',
+                  storage_all:3,
+                  storage_avail:3
+                }]*/
+      }
+    },
+    created() {
+      this.getList()
+    },
     methods: {
       handleBorrow(index, row) {
         console.log(index, row);
@@ -114,154 +287,21 @@
         const tableData = this.tableData
         this.tableData = tableData.filter(
           (data) =>
-            !this.search || data.name.toLowerCase().includes(this.search.toLowerCase())
+            !this.search || data.resourceName.toLowerCase().includes(this.search.toLowerCase())
         )
       },
       handleCurrentChange(val) {
         this.currentPage = val;
         console.log(`当前页: ${val}`);
-      }
+      },
+      getList() {
+        fetchList(this.listQuery).then(response => {
+          console.log(response)
+          this.tableData = response.data.list
+          this.total = response.data.totalNum
+        })
+      },
     },
-    data() {
-    return {
-        search:'',
-        pagesize: 10,
-        currentPage: 1,
-        tableData: [{
-          name:'羊羊羊羊羊羊羊羊羊羊羊羊羊小跳',
-          author:'拉巴阿巴阿巴·阿巴阿巴',
-          publisher:'人民出版社',
-          storage_all:5,
-          storage_avail:2,
-          ISBN:'2-11-003242-1',
-          country:'厄瓜尔多',
-          language:'中文',
-          publish_date:2008,
-          zhongtu:'I523.84'
-        },{
-          name:'马小跳1',
-          author:'阿巴阿巴',
-          publisher:'人民出版社',
-          storage_all:5,
-          storage_avail:2,
-          ISBN:'3-11-003242-1',
-          country:'中国',
-          language:'中文',
-          publish_date:2008,
-          zhongtu:'I523.84'
-        }, {
-          name:'马大跳2',
-          author:'阿巴阿巴',
-          publisher:'人民出版社',
-          storage_all:5,
-          storage_avail:3,
-          ISBN:'3-11-003242-2',
-          country:'中国',
-          language:'中文',
-          publish_date:2008,
-          zhongtu:'I523.84'
-        }, {
-          name:'马大跳3',
-          author:'阿巴阿巴',
-          publisher:'人民出版社',
-          storage_all:6,
-          storage_avail:3,
-          ISBN:'3-11-003242-3',
-          country:'中国',
-          language:'中文',
-          publish_date:2008,
-          zhongtu:'I523.84'
-        },  {
-          name:'人工智能原理、技术及应用',
-          author:'安俊秀',
-          publisher:'机械工业出版社',
-          storage_all:2,
-          storage_avail:2,
-          ISBN:'978-7-111-70777-6',
-          country:'中国',
-          language:'中文',
-          publish_date:2022,
-          zhongtu:'TP18'
-        },  {
-          name:'人工智能导论',
-          author:'金军委',
-          publisher:'北京大学出版社',
-          storage_all:2,
-          storage_avail:2,
-          ISBN:'978-7-301-33118-7',
-          country:'中国',
-          language:'中文',
-          publish_date:2022,
-          zhongtu:'TP18'
-        }, {
-          name:'马小跳4',
-          author:'阿巴阿巴',
-          publisher:'人民出版社',
-          storage_all:5,
-          storage_avail:5,
-          ISBN:'3-11-003242-4',
-          country:'中国',
-          language:'中文',
-          publish_date:2008,
-          zhongtu:'I523.84'
-        }, {
-          name:'马小跳5',
-          author:'阿巴阿巴',
-          publisher:'人民出版社',
-          storage_all:5,
-          storage_avail:3
-        },  {
-          name:'马小跳7',
-          author:'阿巴阿巴',
-          publisher:'人民出版社',
-          storage_all:5,
-          storage_avail:3
-        }, {
-          name:'马大跳8',
-          author:'阿巴阿巴',
-          publisher:'人民出版社',
-          storage_all:5,
-          storage_avail:5
-        }, {
-          name:'马大跳9',
-          author:'阿巴阿巴',
-          publisher:'人民出版社',
-          storage_all:11,
-          storage_avail:10
-        }, {
-          name:'马小跳10',
-          author:'阿巴阿巴',
-          publisher:'人民出版社',
-          storage_all:3,
-          storage_avail:3
-        },{
-          name:'马小跳11',
-          author:'阿巴阿巴',
-          publisher:'人民出版社',
-          storage_all:3,
-          storage_avail:3
-        },{
-          name:'马小跳12',
-          author:'阿巴阿巴',
-          publisher:'人民出版社',
-          storage_all:1,
-          storage_avail:1
-        },{
-          name:'马小跳13',
-          author:'阿巴阿巴',
-          publisher:'人民出版社',
-          storage_all:11,
-          storage_avail:8
-        },  {
-          name:'马小跳6',
-          author:'阿巴阿巴',
-          publisher:'人民出版社',
-          storage_all:3,
-          storage_avail:3
-        }]
-      }
-    },
-
   }
 </script>
 

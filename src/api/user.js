@@ -9,11 +9,11 @@ export function login(data) {
 }
 
 export function getInfo(userId) {
-  const data = { userId: userId}
+  const params = { userId: userId}
   return request({
     url: '/user/get',
-    method: 'post',
-    data
+    method: 'get',
+    params
   })
 }
 
