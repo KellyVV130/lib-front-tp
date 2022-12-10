@@ -194,7 +194,7 @@ export default {
         },
         {
           value: 'super',
-          label: '超级管理员'
+          label: '开发/运维人员'
         }
       ],
       accesses: [1, 2, 3, 4],
